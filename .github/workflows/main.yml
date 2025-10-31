@@ -18,9 +18,9 @@ jobs:
         id: push_directory
         uses: cpina/github-action-push-to-another-repository@main
         env:
-          API_TOKEN_GITHUB: ${{ secrets.AUTO_ACTIONS }}
+          API_TOKEN_GITHUB: ${{ secrets.AUTO_ACTIONS_TO_JJAMMING }}
         with:
-          source-directory: 'output'
+          source-directory: "output"
           destination-github-username: jjamming
           destination-repository-name: Frontend-StockPort
           user-email: ${{ secrets.EMAIL }}
