@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import type { StockData } from "../_MarketDetailPage/types/stockDataType";
 import DetailItem from "@/_MarketDetailPage/components/DetailItem";
 import { sampleData } from "../_MarketDetailPage/datas/stockSample";
+import StockChart from "@/_MarketDetailPage/components/StockChart";
 const MarketDetailPage = () => {
   const [stockData, setStockData] = useState<StockData | null>(null);
 
@@ -36,7 +37,7 @@ const MarketDetailPage = () => {
     stockData.lowPrice < stockData.prevClosePrice ? "text-blue-500" : "text-white";
 
   return (
-    <div className="bg-navy-dark mx-10 p-8 md:p-8 min-h-screen font-sans text-white">
+    <div className="bg-navy-dark mx-15 md:p-8 min-h-screen font-sans text-white">
       {/* 상단: 종목명 및 코드 */}
       <header className="pb-4 border-white/10 border-b">
         <div className="flex items-baseline gap-3">
@@ -89,12 +90,11 @@ const MarketDetailPage = () => {
       </main>
 
       {/* 하단: 차트 */}
-      <footer className="mt-8">
+      <div className="mt-8">
         <div className="flex justify-center items-center bg-white/5 p-4 rounded-lg h-156">
-          <p className="text-gray-400">여기에 차트 표시</p>
-          {/* 예: <TradingViewWidget symbol={stockData.code} /> */}
+          <StockChart />
         </div>
-      </footer>
+      </div>
     </div>
   );
 };
