@@ -1,4 +1,3 @@
-import React from "react";
 import type { MarketItem } from "../types/marketItem";
 import { useNavigate } from "react-router-dom";
 
@@ -14,18 +13,18 @@ const getChangeInfo = (changeRate: number) => {
   return { className: "text-white", icon: "" };
 };
 
-const MarketList: React.FC<MarketListProps> = ({ items, currentPage, itemsPerPage }) => {
+const MarketList = ({ items, currentPage, itemsPerPage }: MarketListProps) => {
   const navigate = useNavigate();
   const startIndex = (currentPage - 1) * itemsPerPage;
   return (
-    <table className="w-full text-white border-collapse">
+    <table className="w-full text-white border-collapse table-fixed">
       <thead>
         <tr className="border-white/10 border-b">
-          <th className="p-4 font-normal text-gray-400 text-sm text-left">종목</th>
-          <th className="p-4 font-normal text-gray-400 text-sm text-left">자산명</th>
-          <th className="p-4 font-normal text-gray-400 text-sm text-left">현재가</th>
-          <th className="p-4 font-normal text-gray-400 text-sm text-left">등락률</th>
-          <th className="p-4 font-normal text-gray-400 text-sm text-left">거래대금</th>
+          <th className="p-4 w-16 font-normal text-gray-400 text-sm text-left">종목</th>
+          <th className="p-4 w-40 font-normal text-gray-400 text-sm text-left">자산명</th>
+          <th className="p-4 w-32 font-normal text-gray-400 text-sm text-left">현재가</th>
+          <th className="p-4 w-32 font-normal text-gray-400 text-sm text-left">등락률</th>
+          <th className="p-4 w-32 font-normal text-gray-400 text-sm text-left">거래대금</th>
         </tr>
       </thead>
       <tbody>
