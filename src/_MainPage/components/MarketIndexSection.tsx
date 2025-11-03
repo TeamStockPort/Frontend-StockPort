@@ -1,5 +1,5 @@
-import MarketIndexCard from "./MarketIndexCard";
-import { marketData } from "../mocks/marketData";
+import MarketIndexCard from "@/_MainPage/components/MarketIndexCard";
+import { marketData } from "@/_MainPage/mocks/marketData";
 
 export default function MarketIndexSection() {
   return (

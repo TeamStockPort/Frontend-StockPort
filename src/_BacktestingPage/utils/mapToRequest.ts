@@ -1,6 +1,6 @@
 // 백엔드측 전송 양식을 맞추기 위해 formDataSchema -> BacktestRequest변한
-import type { BacktestFormSchema } from "./backtestFormSchema";
-import type { Asset, BacktestRequest } from "../types/backtestFormType";
+import type { BacktestFormSchema } from "@/_BacktestingPage/utils/backtestFormSchema";
+import type { Asset, BacktestRequest } from "@/_BacktestingPage/types/backtestFormType";
 
 export function mapToBacktestRequest(values: BacktestFormSchema, assets: Asset[]): BacktestRequest {
   const formatDate = (date: Date) => date.toLocaleDateString("sv-SE");

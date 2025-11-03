@@ -1,4 +1,4 @@
-import { notices } from "../datas/notice";
+import { notices } from "@/_BacktestingPage/datas/notice";
 
 const Notice = () => {
   return (

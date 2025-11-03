@@ -1,4 +1,4 @@
-import type { MarketIndexData } from "../types/MarketIndexType";
+import type { MarketIndexData } from "@/_MainPage/types/MarketIndexType";
 
 export const marketData: MarketIndexData = {
   KOSPI: {

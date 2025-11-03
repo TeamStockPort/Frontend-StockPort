@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { DatePicker } from "@/components/ui/datepicker";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import type { UseFormReturn } from "react-hook-form";
-import type { BacktestFormSchema } from "../utils/backtestFormSchema";
+import type { BacktestFormSchema } from "@/_BacktestingPage/utils/backtestFormSchema";
 
 type BacktestFormProps = {
   form: UseFormReturn<BacktestFormSchema>;

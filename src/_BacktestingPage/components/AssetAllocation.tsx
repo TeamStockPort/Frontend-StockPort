@@ -1,7 +1,7 @@
-import type { Asset } from "../types/backtestFormType";
-import AssetItem from "./AssetItem";
+import type { Asset } from "@/_BacktestingPage/types/backtestFormType";
+import AssetItem from "@/_BacktestingPage/components/AssetItem";
 import { v4 as uuidv4 } from "uuid";
-import WeightSummary from "./WeightSummary";
+import WeightSummary from "@/_BacktestingPage/components/WeightSummary";
 type AssetAllocationProps = {
   assets: Asset[];
   setAssets: React.Dispatch<React.SetStateAction<Asset[]>>;

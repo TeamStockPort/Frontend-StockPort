@@ -1,4 +1,4 @@
-import type { SearchResult } from "../types/backtestFormType";
+import type { SearchResult } from "@/_BacktestingPage/types/backtestFormType";
 import { BACKEND_BASE_URL, API_ENDPOINTS } from "@/constants/api";
 
 export const searchAsset = async (query: string): Promise<SearchResult[]> => {
