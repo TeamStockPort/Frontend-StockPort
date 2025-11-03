@@ -19,3 +19,6 @@ export interface StockData {
   currentPrice: number;
   priceHistory: PriceHistory[];
 }
+
+export type Period = "1W" | "1M" | "1Y" | "10Y";
+export type ChartType = "candlestick" | "line";

@@ -1,12 +1,28 @@
 import ChartFilterBar from "@/_MarketDetailPage/components/ChartFilterBar";
 import ReactECharts from "echarts-for-react";
-import type { PriceHistory } from "@/_MarketDetailPage/types/stockDataType";
+import {
+  type ChartType,
+  type Period,
+  type PriceHistory,
+} from "@/_MarketDetailPage/types/stockDataType";
+import { useState } from "react";
 
 interface StockChartProps {
   stockData: PriceHistory[];
 }
 
 const StockChart = ({ stockData }: StockChartProps) => {
+  const [period, setPeriod] = useState<Period>("1M");
+  const [chartType, setChartType] = useState<ChartType>("candlestick");
+
+  const handleChangePeriod = (value: string) => {
+    setPeriod(value as Period);
+  };
+
+  const handleChangeChartType = (value: string) => {
+    setChartType(value as ChartType);
+  };
+
   const dates = stockData.map((item) => item.baseDate);
   const candleData = stockData.map((item) => [
     item.openPrice,
@@ -73,7 +89,10 @@ const StockChart = ({ stockData }: StockChartProps) => {
   };
   return (
     <div className="flex-col gap-20 m-10 w-full">
-      <ChartFilterBar />
+      <ChartFilterBar
+        onChangePeriod={handleChangePeriod}
+        onChangeChartType={handleChangeChartType}
+      />
       <ReactECharts option={option} style={{ height: 500 }} />
     </div>
   );
