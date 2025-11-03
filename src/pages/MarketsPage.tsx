@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import MarketList from "../_MarketsPage/components/MarketList";
-import { MOCK_DATA } from "../_MarketsPage/datas/MarketMockData";
-import type { MarketItem } from "../_MarketsPage/types/marketItem";
-import Pagination from "../components/Pagination";
-import Title from "../components/Title";
+import MarketList from "@/_MarketsPage/components/MarketList";
+import { MOCK_DATA } from "@/_MarketsPage/datas/MarketMockData";
+import type { MarketItem } from "@/_MarketsPage/types/marketItem";
+import Pagination from "@/components/Pagination";
+import Title from "@/components/Title";
 
 const ITEMS_PER_PAGE = 10;
 

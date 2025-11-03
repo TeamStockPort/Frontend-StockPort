@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import { HERO_CONTENT } from "../mocks/heroContent";
+import { HERO_CONTENT } from "@/_MainPage/mocks/heroContent";
 import React from "react";
 import { Link } from "react-router-dom";
 

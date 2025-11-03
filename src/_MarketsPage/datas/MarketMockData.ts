@@ -1,4 +1,4 @@
-import type { MarketItem } from "../types/marketItem";
+import type { MarketItem } from "@/_MarketsPage/types/marketItem";
 
 export const MOCK_DATA: MarketItem[] = [
   {

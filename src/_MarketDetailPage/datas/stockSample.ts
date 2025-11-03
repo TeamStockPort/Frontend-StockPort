@@ -1,4 +1,4 @@
-import type { StockData } from "../types/stockDataType";
+import type { StockData } from "@/_MarketDetailPage/types/stockDataType";
 
 export const sampleData: StockData = {
   stockCode: "005930",

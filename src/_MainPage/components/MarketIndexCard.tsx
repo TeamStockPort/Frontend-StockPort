@@ -1,6 +1,6 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { YAxis, AreaChart, Area, ResponsiveContainer } from "recharts";
-import type { MarketType, MarketIndex } from "../types/MarketIndexType";
+import type { MarketType, MarketIndex } from "@/_MainPage/types/MarketIndexType";
 
 type MarketIndexCardProps = {
   marketType: MarketType;

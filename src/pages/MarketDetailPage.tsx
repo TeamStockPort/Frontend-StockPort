@@ -1,8 +1,8 @@
 import { useState, useEffect, useMemo } from "react";
 import { format, subDays } from "date-fns";
-import { type PriceHistory, type StockData } from "../_MarketDetailPage/types/stockDataType";
+import { type PriceHistory, type StockData } from "@/_MarketDetailPage/types/stockDataType";
 import DetailItem from "@/_MarketDetailPage/components/DetailItem";
-import { sampleData } from "../_MarketDetailPage/datas/stockSample";
+import { sampleData } from "@/_MarketDetailPage/datas/stockSample";
 import StockChart from "@/_MarketDetailPage/components/StockChart";
 const MarketDetailPage = () => {
   const [stockData, setStockData] = useState<StockData | null>(null);
