@@ -5,7 +5,7 @@ import {
   type Period,
   type PriceHistory,
 } from "@/_MarketDetailPage/types/stockDataType";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 interface StockChartProps {
   stockData: PriceHistory[];
@@ -14,25 +14,44 @@ interface StockChartProps {
 const StockChart = ({ stockData }: StockChartProps) => {
   const [period, setPeriod] = useState<Period>("1M");
   const [chartType, setChartType] = useState<ChartType>("candlestick");
+  const isFirstRender = useRef(true);
 
   const handleChangePeriod = (value: string) => {
     setPeriod(value as Period);
+    isFirstRender.current = false;
   };
 
   const handleChangeChartType = (value: string) => {
     setChartType(value as ChartType);
+    isFirstRender.current = false;
   };
 
-  const dates = stockData.map((item) => item.baseDate);
+  const formatDate = (dateString: string) => {
+    const year = dateString.substring(0, 4);
+    const month = dateString.substring(4, 6);
+    const day = dateString.substring(6, 8);
+
+    if (period === "10Y") {
+      return `${year}.${month}`;
+    } else {
+      return `${month}.${day}`;
+    }
+  };
+
+  const dates = stockData.map((item) => formatDate(item.baseDate));
   const candleData = stockData.map((item) => [
     item.openPrice,
     item.closePrice,
     item.lowPrice,
     item.highPrice,
   ]);
+  const lows = stockData.map((d) => d.lowPrice);
+  const highs = stockData.map((d) => d.highPrice);
 
   const option = {
-    animation: true,
+    animation: isFirstRender.current,
+    animationDuration: 1000,
+    animationEasing: "cubicOut",
     grid: {
       left: 10,
       right: 60,
@@ -60,6 +79,8 @@ const StockChart = ({ stockData }: StockChartProps) => {
       position: "right",
       scale: true,
       splitNumber: 4,
+      min: Math.min(...lows),
+      max: Math.max(...highs),
       axisLine: { show: false },
       splitLine: {
         show: true,
@@ -77,14 +98,42 @@ const StockChart = ({ stockData }: StockChartProps) => {
       },
     },
     series: {
-      type: "candlestick",
-      data: candleData,
-      itemStyle: {
-        color: "#ef4444",
-        color0: "#3b82f6",
-        borderColor: "#ef4444",
-        borderColor0: "#3b82f6",
-      },
+      type: chartType === "candlestick" ? "candlestick" : "line",
+      data: chartType === "candlestick" ? candleData : stockData.map((item) => item.closePrice),
+      smooth: false,
+      itemStyle:
+        chartType === "candlestick"
+          ? {
+              color: "#ef4444",
+              color0: "#3b82f6",
+              borderColor: "#ef4444",
+              borderColor0: "#3b82f6",
+            }
+          : { color: "#10b981" },
+      lineStyle: chartType === "line" ? { width: 2, color: "#10b981" } : undefined,
+      areaStyle:
+        chartType === "line"
+          ? {
+              color: {
+                type: "linear",
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [
+                  {
+                    offset: 0,
+                    color: "rgba(16, 185, 129, 0.4)",
+                  },
+                  {
+                    offset: 1,
+                    color: "rgba(16, 185, 129, 0)",
+                  },
+                ],
+              },
+            }
+          : undefined,
+      showSymbol: false,
     },
   };
   return (
