@@ -12,7 +12,7 @@ import type { MarketIndex } from "@/_MainPage/types/MarketIndexType";
 export const getIndexData = async (marketType: "KOSPI" | "KOSDAQ"): Promise<MarketIndex> => {
   const today = new Date();
   const endDate = format(today, "yyyy-MM-dd");
-  const startDate = format(subDays(today, 10), "yyyy-MM-dd");
+  const startDate = format(subDays(today, 14), "yyyy-MM-dd");
 
   const response = await instance.get<ApiResponse<MarketIndex>>(
     API_ENDPOINTS.indexPeriod(marketType, startDate, endDate)
