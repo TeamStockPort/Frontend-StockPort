@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { type AxiosError, type AxiosInstance } from "axios";
 import { __DEV__ } from "./instance";
 import type { ApiErrorResponse } from "@/lib/apis/types";
