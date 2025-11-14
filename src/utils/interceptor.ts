@@ -1,5 +1,6 @@
 import { type AxiosError, type AxiosInstance } from "axios";
 import { __DEV__ } from "./instance";
+import type { ApiErrorResponse } from "@/lib/apis/types";
 
 export const applyDevLoggingInterceptor = (instance: AxiosInstance) => {
   instance.interceptors.request.use((config) => {
@@ -22,11 +23,17 @@ export const applyDevLoggingInterceptor = (instance: AxiosInstance) => {
       return response;
     },
     // 에러 응답 처리
-    (error: AxiosError) => {
+    (error: AxiosError<ApiErrorResponse>) => {
       if (__DEV__) {
         console.error("❌ [Axios Error]", error.message);
         if (error.response) {
-          console.error("💥 [Error Response]", error.response.data);
+          const errorData = error.response.data;
+          console.error("💥 [Error Response]", {
+            status: errorData?.status,
+            title: errorData?.title,
+            detail: errorData?.detail,
+            instance: errorData?.instance,
+          });
         }
       }
       return Promise.reject(error);
