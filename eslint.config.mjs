@@ -4,11 +4,13 @@ import tseslint from "typescript-eslint";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 import react from "eslint-plugin-react";
+import prettier from "eslint-config-prettier";
 
 export default [
   { ignores: ["dist", "node_modules", "build"] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
+  prettier, // Prettier와 충돌하는 ESLint 규칙 비활성화
   {
     files: ["**/*.{ts,tsx}"],
     languageOptions: {
