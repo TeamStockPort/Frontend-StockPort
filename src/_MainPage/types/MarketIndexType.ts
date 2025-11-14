@@ -1,12 +1,17 @@
 export type MarketType = "KOSPI" | "KOSDAQ";
 
-export type ChartDataPoint = { date: string; value: number };
-
 export type MarketIndex = {
-  value: number;
-  change: number;
-  changePercent: number;
-  direction: "up" | "down";
-  chartData: ChartDataPoint[];
+  marketType: MarketType;
+  startDate: string;
+  endDate: string;
+  data: {
+    marketType: MarketType;
+    baseDate: string;
+    openPrice: number;
+    closePrice: number;
+    highPrice: number;
+    lowPrice: number;
+    changeAmount: number;
+    changeRate: number;
+  }[];
 };
-export type MarketIndexData = Record<MarketType, MarketIndex>;
