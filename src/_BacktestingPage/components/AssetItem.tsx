@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import type { SearchResult, Asset } from "@/_BacktestingPage/types/backtestFormType";
-import { debounce } from "lodash";
+import { useGetSearchAssets } from "@/lib/hooks/useGetSearchAssets";
+import { useDebounce } from "@/lib/hooks/useDebounce";
 type AssetItemProps = {
   AssetIndex: number;
   asset: Asset;
@@ -8,51 +9,42 @@ type AssetItemProps = {
   onDelete: () => void;
 };
 
-const mockSearchAsset = async (query: string): Promise<SearchResult[]> => {
-  if (!query) return [];
-  return [
-    { name: "삼성전자", ticker: "005930" },
-    { name: "삼성물산", ticker: "028260" },
-    { name: "삼성SDI", ticker: "006400" },
-    { name: "삼성바이오로직스", ticker: "207940" },
-    { name: "삼성에스디에스", ticker: "018260" },
-  ];
-};
-
 const AssetItem = ({ AssetIndex, asset, onUpdate, onDelete }: AssetItemProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [query, setQuery] = useState(asset.name);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const skipSearchRef = useRef(false);
   const hasClearedRef = useRef(false);
 
-  // API 연결 시 useEffect 의존성 최적화 필요
-  const handleSearch = debounce(async (keyword: string) => {
-    const results = await mockSearchAsset(keyword);
-    setSearchResults(results);
-    setIsDropdownOpen(true);
-  }, 500);
+  const debouncedQuery = useDebounce(query, 500);
 
+  const { data: searchAssets } = useGetSearchAssets(debouncedQuery);
+
+  const searchResults: SearchResult[] = searchAssets
+    ? searchAssets.map((item) => ({
+        name: item.stockName,
+        ticker: item.stockCode,
+      }))
+    : [];
+
+  // 검색 결과가 있을 때 드롭다운 열기
   useEffect(() => {
     if (skipSearchRef.current) {
       skipSearchRef.current = false;
       return;
     }
-    if (query) {
-      handleSearch(query);
-    } else {
-      setSearchResults([]);
+    if (searchResults.length > 0 && debouncedQuery) {
+      setIsDropdownOpen(true);
+    } else if (!debouncedQuery) {
       setIsDropdownOpen(false);
     }
-  }, [query]);
+  }, [searchResults, debouncedQuery]);
 
   const handleSelect = (selected: SearchResult) => {
     const displayValue = `${selected.name} (${selected.ticker})`;
     onUpdate({ ...asset, name: selected.name, ticker: selected.ticker });
     skipSearchRef.current = true;
     setQuery(displayValue);
-    setSearchResults([]);
     setIsDropdownOpen(false);
     hasClearedRef.current = false;
   };
@@ -95,7 +87,7 @@ const AssetItem = ({ AssetIndex, asset, onUpdate, onDelete }: AssetItemProps) =>
       />
 
       {isDropdownOpen && searchResults.length > 0 && (
-        <div className="top-full left-55 z-20 absolute flex flex-col items-center bg-navy mt-2 border rounded w-60 h-auto text-[#E0E6ED] cursor-pointer">
+        <div className="top-full left-55 z-20 absolute flex flex-col items-center bg-navy mt-2 border rounded w-60 max-h-[240px] overflow-y-auto text-[#E0E6ED] cursor-pointer">
           {searchResults.map((item) => (
             <div
               key={item.ticker}
