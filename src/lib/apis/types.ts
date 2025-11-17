@@ -18,3 +18,10 @@ export interface ApiErrorResponse {
   detail: string;
   instance: string;
 }
+
+// 종목 검색 응답 타입
+export type SearchAssetsResponse = {
+  stockName: string;
+  stockCode: string;
+  isinCode: string;
+};

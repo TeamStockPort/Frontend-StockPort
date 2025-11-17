@@ -9,7 +9,7 @@ export const API_ENDPOINTS = {
     return `/api/index/period/${marketType}${query ? `?${query}` : ""}`;
   },
   indexCurrent: () => `/api/index/current`,
-  searchAsset: (keyword: string) => `/api/stock?keyword=${keyword}`,
+  searchAssets: (keyword: string) => `/api/stock?query=${encodeURIComponent(keyword)}`,
   stockData: (stockcode: string, startDate?: string, endDate?: string) => {
     const params = new URLSearchParams();
     if (startDate !== undefined) params.append("startDate", startDate);
