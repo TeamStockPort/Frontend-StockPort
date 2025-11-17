@@ -5,6 +5,7 @@ import DetailItem from "@/_MarketDetailPage/components/DetailItem";
 import StockChart from "@/_MarketDetailPage/components/StockChart";
 import ChartFilterBar from "@/_MarketDetailPage/components/ChartFilterBar";
 import { useGetStockDetail } from "@/lib/hooks/useGetStockDetail";
+import { formatNumber } from "@/lib/utils";
 
 const MarketDetailPage = () => {
   const { code } = useParams<{ code: string }>();
@@ -20,12 +21,7 @@ const MarketDetailPage = () => {
     }
 
     // stockPriceList 필드명이 다를 수 있으므로 여러 가능성 확인
-    const stockPriceList =
-      stockData.stockPriceList ||
-      (stockData as any).stock_price_list ||
-      (stockData as any)["stock-price-list"] ||
-      (stockData as any).priceHistory ||
-      null;
+    const stockPriceList = stockData.stockPriceList;
 
     if (!stockPriceList) {
       return { latestData: null, previousData: null };
@@ -110,11 +106,13 @@ const MarketDetailPage = () => {
       <main className="gap-8 grid grid-cols-1 md:grid-cols-3 mt-6">
         {/* 좌측: 현재가 정보 */}
         <section className="flex flex-col justify-center">
-          <div className={`text-5xl font-bold ${changeInfo.color}`}>{latestData.closePrice}</div>
+          <div className={`text-5xl font-bold ${changeInfo.color}`}>
+            {formatNumber(latestData.closePrice)}
+          </div>
           <div className={`flex items-center gap-2 mt-2 text-lg font-semibold ${changeInfo.color}`}>
             <span className="font-normal text-white">전일대비</span>
             {changeInfo.icon}
-            <span>{latestData.changeAmount}</span>
+            <span>{formatNumber(latestData.changeAmount)}</span>
             <span>({latestData.changeRate.toFixed(2)}%)</span>
           </div>
         </section>
@@ -122,11 +120,23 @@ const MarketDetailPage = () => {
         {/* 우측: 상세 거래 정보 */}
         <section className="md:col-span-2 bg-white/5 p-4 rounded-lg">
           <dl className="gap-x-5 gap-y-5 grid grid-cols-2 md:grid-cols-3">
-            <DetailItem label="전일" value={previousData.closePrice} />
-            <DetailItem label="고가" value={latestData.highPrice} className={highPriceColor} />
-            <DetailItem label="종가" value={latestData.closePrice} className={changeInfo.color} />
-            <DetailItem label="시가" value={latestData.openPrice} />
-            <DetailItem label="저가" value={latestData.lowPrice} className={lowPriceColor} />
+            <DetailItem label="전일" value={formatNumber(previousData.closePrice)} />
+            <DetailItem
+              label="고가"
+              value={formatNumber(latestData.highPrice)}
+              className={highPriceColor}
+            />
+            <DetailItem
+              label="종가"
+              value={formatNumber(latestData.closePrice)}
+              className={changeInfo.color}
+            />
+            <DetailItem label="시가" value={formatNumber(latestData.openPrice)} />
+            <DetailItem
+              label="저가"
+              value={formatNumber(latestData.lowPrice)}
+              className={lowPriceColor}
+            />
           </dl>
         </section>
       </main>
