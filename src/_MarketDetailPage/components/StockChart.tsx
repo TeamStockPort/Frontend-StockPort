@@ -1,35 +1,30 @@
-import ChartFilterBar from "@/_MarketDetailPage/components/ChartFilterBar";
 import ReactECharts from "echarts-for-react";
-import {
-  type ChartType,
-  type Period,
-  type PriceHistory,
-} from "@/_MarketDetailPage/types/stockDataType";
-import { useState, useRef } from "react";
+import { type ChartType, type Period } from "@/_MarketDetailPage/types/stockDataType";
+import { useRef, useEffect, useMemo } from "react";
+import { useGetStockDetail } from "@/lib/hooks/useGetStockDetail";
+import { Spinner } from "@/components/ui/spinner";
 
 interface StockChartProps {
-  stockData: PriceHistory[];
+  stockCode: string;
+  period: Period;
+  chartType: ChartType;
 }
 
-const StockChart = ({ stockData }: StockChartProps) => {
-  const [period, setPeriod] = useState<Period>("1M");
-  const [chartType, setChartType] = useState<ChartType>("candlestick");
+const StockChart = ({ stockCode, period, chartType }: StockChartProps) => {
   const isFirstRender = useRef(true);
 
-  const handleChangePeriod = (value: string) => {
-    setPeriod(value as Period);
-    isFirstRender.current = false;
-  };
+  // period에 해당하는 API 요청
+  const { data: stockData, isLoading } = useGetStockDetail(stockCode, period);
 
-  const handleChangeChartType = (value: string) => {
-    setChartType(value as ChartType);
+  useEffect(() => {
     isFirstRender.current = false;
-  };
+  }, [chartType, period]);
 
   const formatDate = (dateString: string) => {
-    const year = dateString.substring(0, 4);
-    const month = dateString.substring(4, 6);
-    const day = dateString.substring(6, 8);
+    const parts = dateString.split("-");
+    const year = parts[0];
+    const month = parts[1];
+    const day = parts[2];
 
     if (period === "10Y") {
       return `${year}.${month}`;
@@ -38,15 +33,34 @@ const StockChart = ({ stockData }: StockChartProps) => {
     }
   };
 
-  const dates = stockData.map((item) => formatDate(item.baseDate));
-  const candleData = stockData.map((item) => [
+  // period에 따라 데이터 필터링 (useMemo는 early return 전에 호출)
+  const filteredDataByPeriod = useMemo(() => {
+    if (!stockData || !stockData.stockPriceList) {
+      return [];
+    }
+
+    // 모든 데이터를 역순으로 반환 (10년 데이터도 모두 렌더링)
+    return [...stockData.stockPriceList].reverse();
+  }, [stockData, period]);
+
+  // API 데이터가 없으면 로딩 표시
+  if (isLoading || !stockData || !stockData.stockPriceList || filteredDataByPeriod.length === 0) {
+    return (
+      <div className="flex justify-center items-center h-500">
+        <Spinner className="size-12" />
+      </div>
+    );
+  }
+
+  const dates = filteredDataByPeriod.map((item) => formatDate(item.baseDate));
+  const candleData = filteredDataByPeriod.map((item) => [
     item.openPrice,
     item.closePrice,
     item.lowPrice,
     item.highPrice,
   ]);
-  const lows = stockData.map((d) => d.lowPrice);
-  const highs = stockData.map((d) => d.highPrice);
+  const lows = filteredDataByPeriod.map((d) => d.lowPrice);
+  const highs = filteredDataByPeriod.map((d) => d.highPrice);
 
   const option = {
     animation: isFirstRender.current,
@@ -99,7 +113,10 @@ const StockChart = ({ stockData }: StockChartProps) => {
     },
     series: {
       type: chartType === "candlestick" ? "candlestick" : "line",
-      data: chartType === "candlestick" ? candleData : stockData.map((item) => item.closePrice),
+      data:
+        chartType === "candlestick"
+          ? candleData
+          : filteredDataByPeriod.map((item) => item.closePrice),
       smooth: false,
       itemStyle:
         chartType === "candlestick"
@@ -138,10 +155,6 @@ const StockChart = ({ stockData }: StockChartProps) => {
   };
   return (
     <div className="flex-col gap-20 m-10 w-full">
-      <ChartFilterBar
-        onChangePeriod={handleChangePeriod}
-        onChangeChartType={handleChangeChartType}
-      />
       <ReactECharts option={option} style={{ height: 500 }} />
     </div>
   );

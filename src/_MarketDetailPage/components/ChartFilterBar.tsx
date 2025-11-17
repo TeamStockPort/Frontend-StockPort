@@ -1,15 +1,23 @@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChartCandlestick, ChartLine } from "lucide-react";
+import { type Period, type ChartType } from "@/_MarketDetailPage/types/stockDataType";
 
 interface ChartFilterBarProps {
+  period: Period;
+  chartType: ChartType;
   onChangePeriod: (value: string) => void;
   onChangeChartType: (value: string) => void;
 }
 
-const ChartFilterBar = ({ onChangePeriod, onChangeChartType }: ChartFilterBarProps) => {
+const ChartFilterBar = ({
+  period,
+  chartType,
+  onChangePeriod,
+  onChangeChartType,
+}: ChartFilterBarProps) => {
   return (
     <div className="flex justify-start items-center gap-4 ml-2.5 h-20">
-      <Tabs defaultValue="1M" onValueChange={onChangePeriod}>
+      <Tabs value={period} onValueChange={onChangePeriod}>
         <TabsList className="bg-white/5 border-white/10">
           <TabsTrigger
             value="1W"
@@ -37,7 +45,7 @@ const ChartFilterBar = ({ onChangePeriod, onChangeChartType }: ChartFilterBarPro
           </TabsTrigger>
         </TabsList>
       </Tabs>
-      <Tabs defaultValue="candlestick" onValueChange={onChangeChartType}>
+      <Tabs value={chartType} onValueChange={onChangeChartType}>
         <TabsList className="bg-white/5 border-white/10">
           <TabsTrigger
             value="candlestick"
