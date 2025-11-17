@@ -3,16 +3,18 @@ import { useParams } from "react-router-dom";
 import { type Period, type ChartType } from "@/_MarketDetailPage/types/stockDataType";
 import DetailItem from "@/_MarketDetailPage/components/DetailItem";
 import StockChart from "@/_MarketDetailPage/components/StockChart";
-import ChartFilterBar from "@/_MarketDetailPage/components/ChartFilterBar";
 import { useGetStockDetail } from "@/lib/hooks/useGetStockDetail";
 import { formatNumber } from "@/lib/utils";
+import ChartFilterBar from "@/_MarketDetailPage/components/ChartFilterBar";
+import { Spinner } from "@/components/ui/spinner";
 
 const MarketDetailPage = () => {
   const { code } = useParams<{ code: string }>();
   const [period, setPeriod] = useState<Period>("1M");
   const [chartType, setChartType] = useState<ChartType>("candlestick");
 
-  const { data: stockData, isLoading, error } = useGetStockDetail(code || "", period);
+  // 항상 오늘 기준 7일 전 ~ 오늘 데이터 요청 (고정)
+  const { data: stockData, isLoading, error } = useGetStockDetail(code || "", "1W");
 
   // API 데이터의 가장 최근 데이터와 그 직전 데이터 찾기
   const { latestData, previousData } = useMemo(() => {
@@ -62,7 +64,7 @@ const MarketDetailPage = () => {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center bg-navy-dark min-h-screen text-white">
-        <div className="text-xl">Loading...</div>
+        <Spinner className="size-12" />
       </div>
     );
   }
@@ -144,11 +146,13 @@ const MarketDetailPage = () => {
       {/* 하단: 차트 */}
       <div className="mt-8">
         <ChartFilterBar
+          period={period}
+          chartType={chartType}
           onChangePeriod={(value) => setPeriod(value as Period)}
           onChangeChartType={(value) => setChartType(value as ChartType)}
         />
         <div className="flex justify-center items-center bg-white/5 p-4 rounded-lg h-156">
-          <StockChart stockData={stockData.stockPriceList} chartType={chartType} />
+          <StockChart stockCode={code || ""} period={period} chartType={chartType} />
         </div>
       </div>
     </div>

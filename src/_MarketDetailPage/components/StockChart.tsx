@@ -1,28 +1,30 @@
 import ReactECharts from "echarts-for-react";
-import {
-  type ChartType,
-  type Period,
-  type StockPriceList,
-} from "@/_MarketDetailPage/types/stockDataType";
-import { useRef, useEffect } from "react";
+import { type ChartType, type Period } from "@/_MarketDetailPage/types/stockDataType";
+import { useRef, useEffect, useMemo } from "react";
+import { useGetStockDetail } from "@/lib/hooks/useGetStockDetail";
+import { Spinner } from "@/components/ui/spinner";
 
 interface StockChartProps {
-  stockData: StockPriceList[];
+  stockCode: string;
+  period: Period;
   chartType: ChartType;
-  period?: Period;
 }
 
-const StockChart = ({ stockData, chartType, period = "1M" }: StockChartProps) => {
+const StockChart = ({ stockCode, period, chartType }: StockChartProps) => {
   const isFirstRender = useRef(true);
+
+  // period에 해당하는 API 요청
+  const { data: stockData, isLoading } = useGetStockDetail(stockCode, period);
 
   useEffect(() => {
     isFirstRender.current = false;
   }, [chartType, period]);
 
   const formatDate = (dateString: string) => {
-    const year = dateString.substring(0, 4);
-    const month = dateString.substring(4, 6);
-    const day = dateString.substring(6, 8);
+    const parts = dateString.split("-");
+    const year = parts[0];
+    const month = parts[1];
+    const day = parts[2];
 
     if (period === "10Y") {
       return `${year}.${month}`;
@@ -31,17 +33,48 @@ const StockChart = ({ stockData, chartType, period = "1M" }: StockChartProps) =>
     }
   };
 
-  const reversedData = [...stockData].reverse();
+  // period에 따라 데이터 필터링 (useMemo는 early return 전에 호출)
+  const filteredDataByPeriod = useMemo(() => {
+    if (!stockData || !stockData.stockPriceList) {
+      return [];
+    }
 
-  const dates = reversedData.map((item) => formatDate(item.baseDate));
-  const candleData = reversedData.map((item) => [
+    const reversedData = [...stockData.stockPriceList].reverse();
+
+    // 10Y 기간일 때 3개월 단위로 필터링 (1월, 4월, 7월, 11월 1일)
+    if (period === "10Y") {
+      return reversedData.filter((item) => {
+        const parts = item.baseDate.split("-");
+        const month = parts[1];
+        const day = parts[2];
+
+        return (
+          (month === "01" || month === "04" || month === "07" || month === "11") && day === "01"
+        );
+      });
+    }
+
+    return reversedData;
+  }, [stockData, period]);
+
+  // API 데이터가 없으면 로딩 표시
+  if (isLoading || !stockData || !stockData.stockPriceList || filteredDataByPeriod.length === 0) {
+    return (
+      <div className="flex justify-center items-center h-500">
+        <Spinner className="size-12" />
+      </div>
+    );
+  }
+
+  const dates = filteredDataByPeriod.map((item) => formatDate(item.baseDate));
+  const candleData = filteredDataByPeriod.map((item) => [
     item.openPrice,
     item.closePrice,
     item.lowPrice,
     item.highPrice,
   ]);
-  const lows = reversedData.map((d) => d.lowPrice);
-  const highs = reversedData.map((d) => d.highPrice);
+  const lows = filteredDataByPeriod.map((d) => d.lowPrice);
+  const highs = filteredDataByPeriod.map((d) => d.highPrice);
 
   const option = {
     animation: isFirstRender.current,
@@ -94,7 +127,10 @@ const StockChart = ({ stockData, chartType, period = "1M" }: StockChartProps) =>
     },
     series: {
       type: chartType === "candlestick" ? "candlestick" : "line",
-      data: chartType === "candlestick" ? candleData : reversedData.map((item) => item.closePrice),
+      data:
+        chartType === "candlestick"
+          ? candleData
+          : filteredDataByPeriod.map((item) => item.closePrice),
       smooth: false,
       itemStyle:
         chartType === "candlestick"
