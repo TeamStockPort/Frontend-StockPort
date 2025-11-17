@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { getIndexData } from "@/_MainPage/apis/getIndex";
+import { getIndexData } from "@/lib/apis/getIndex";
 import MarketIndexCard from "@/_MainPage/components/MarketIndexCard";
 import { useQuery } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
