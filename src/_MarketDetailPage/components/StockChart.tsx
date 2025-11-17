@@ -39,19 +39,8 @@ const StockChart = ({ stockCode, period, chartType }: StockChartProps) => {
       return [];
     }
 
-    const reversedData = [...stockData.stockPriceList].reverse();
-
-    // 10Y 기간일 때 매 달 1일, 15일, 30일 데이터만 필터링
-    if (period === "10Y") {
-      return reversedData.filter((item) => {
-        const parts = item.baseDate.split("-");
-        const day = parts[2];
-
-        return day === "01" || day === "15" || day === "30";
-      });
-    }
-
-    return reversedData;
+    // 모든 데이터를 역순으로 반환 (10년 데이터도 모두 렌더링)
+    return [...stockData.stockPriceList].reverse();
   }, [stockData, period]);
 
   // API 데이터가 없으면 로딩 표시
