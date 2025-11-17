@@ -1,30 +1,23 @@
-import ChartFilterBar from "@/_MarketDetailPage/components/ChartFilterBar";
 import ReactECharts from "echarts-for-react";
 import {
   type ChartType,
   type Period,
-  type PriceHistory,
+  type StockPriceList,
 } from "@/_MarketDetailPage/types/stockDataType";
-import { useState, useRef } from "react";
+import { useRef, useEffect } from "react";
 
 interface StockChartProps {
-  stockData: PriceHistory[];
+  stockData: StockPriceList[];
+  chartType: ChartType;
+  period?: Period;
 }
 
-const StockChart = ({ stockData }: StockChartProps) => {
-  const [period, setPeriod] = useState<Period>("1M");
-  const [chartType, setChartType] = useState<ChartType>("candlestick");
+const StockChart = ({ stockData, chartType, period = "1M" }: StockChartProps) => {
   const isFirstRender = useRef(true);
 
-  const handleChangePeriod = (value: string) => {
-    setPeriod(value as Period);
+  useEffect(() => {
     isFirstRender.current = false;
-  };
-
-  const handleChangeChartType = (value: string) => {
-    setChartType(value as ChartType);
-    isFirstRender.current = false;
-  };
+  }, [chartType, period]);
 
   const formatDate = (dateString: string) => {
     const year = dateString.substring(0, 4);
@@ -38,15 +31,17 @@ const StockChart = ({ stockData }: StockChartProps) => {
     }
   };
 
-  const dates = stockData.map((item) => formatDate(item.baseDate));
-  const candleData = stockData.map((item) => [
+  const reversedData = [...stockData].reverse();
+
+  const dates = reversedData.map((item) => formatDate(item.baseDate));
+  const candleData = reversedData.map((item) => [
     item.openPrice,
     item.closePrice,
     item.lowPrice,
     item.highPrice,
   ]);
-  const lows = stockData.map((d) => d.lowPrice);
-  const highs = stockData.map((d) => d.highPrice);
+  const lows = reversedData.map((d) => d.lowPrice);
+  const highs = reversedData.map((d) => d.highPrice);
 
   const option = {
     animation: isFirstRender.current,
@@ -99,7 +94,7 @@ const StockChart = ({ stockData }: StockChartProps) => {
     },
     series: {
       type: chartType === "candlestick" ? "candlestick" : "line",
-      data: chartType === "candlestick" ? candleData : stockData.map((item) => item.closePrice),
+      data: chartType === "candlestick" ? candleData : reversedData.map((item) => item.closePrice),
       smooth: false,
       itemStyle:
         chartType === "candlestick"
@@ -138,10 +133,6 @@ const StockChart = ({ stockData }: StockChartProps) => {
   };
   return (
     <div className="flex-col gap-20 m-10 w-full">
-      <ChartFilterBar
-        onChangePeriod={handleChangePeriod}
-        onChangeChartType={handleChangeChartType}
-      />
       <ReactECharts option={option} style={{ height: 500 }} />
     </div>
   );
