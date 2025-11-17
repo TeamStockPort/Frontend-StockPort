@@ -1,4 +1,4 @@
-export interface PriceHistory {
+export interface StockPriceList {
   baseDate: string;
   openPrice: number;
   closePrice: number;
@@ -17,7 +17,7 @@ export interface StockData {
   listedShares: number;
   marketCap: number;
   currentPrice: number;
-  priceHistory: PriceHistory[];
+  stockPriceList: StockPriceList[];
 }
 
 export type Period = "1W" | "1M" | "1Y" | "10Y";

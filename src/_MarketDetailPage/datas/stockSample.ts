@@ -9,7 +9,7 @@ export const sampleData: StockData = {
   listedShares: 5969782550,
   marketCap: 437200000000000,
   currentPrice: 109800,
-  priceHistory: [
+  stockPriceList: [
     {
       baseDate: "20251021",
       openPrice: 108000,
