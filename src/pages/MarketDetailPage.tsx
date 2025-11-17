@@ -11,7 +11,7 @@ import { Spinner } from "@/components/ui/spinner";
 const MarketDetailPage = () => {
   const { code } = useParams<{ code: string }>();
   const [period, setPeriod] = useState<Period>("1M");
-  const [chartType, setChartType] = useState<ChartType>("candlestick");
+  const [chartType, setChartType] = useState<ChartType>("line");
 
   // 항상 오늘 기준 7일 전 ~ 오늘 데이터 요청 (고정)
   const { data: stockData, isLoading, error } = useGetStockDetail(code || "", "1W");
