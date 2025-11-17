@@ -41,16 +41,13 @@ const StockChart = ({ stockCode, period, chartType }: StockChartProps) => {
 
     const reversedData = [...stockData.stockPriceList].reverse();
 
-    // 10Y 기간일 때 3개월 단위로 필터링 (1월, 4월, 7월, 11월 1일)
+    // 10Y 기간일 때 매 달 1일, 15일, 30일 데이터만 필터링
     if (period === "10Y") {
       return reversedData.filter((item) => {
         const parts = item.baseDate.split("-");
-        const month = parts[1];
         const day = parts[2];
 
-        return (
-          (month === "01" || month === "04" || month === "07" || month === "11") && day === "01"
-        );
+        return day === "01" || day === "15" || day === "30";
       });
     }
 
