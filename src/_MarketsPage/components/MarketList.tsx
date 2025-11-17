@@ -1,8 +1,9 @@
-import type { MarketItem } from "@/_MarketsPage/types/marketItem";
+import type { StockListItem } from "@/_MarketsPage/types/marketItem";
 import { useNavigate } from "react-router-dom";
+import { formatNumber } from "@/lib/utils";
 
 interface MarketListProps {
-  items: MarketItem[];
+  items: StockListItem[];
   currentPage: number;
   itemsPerPage: number;
 }
@@ -24,39 +25,41 @@ const MarketList = ({ items, currentPage, itemsPerPage }: MarketListProps) => {
           <th className="p-4 w-40 font-normal text-gray-400 text-sm text-left">자산명</th>
           <th className="p-4 w-32 font-normal text-gray-400 text-sm text-left">현재가</th>
           <th className="p-4 w-32 font-normal text-gray-400 text-sm text-left">등락률</th>
-          <th className="p-4 w-32 font-normal text-gray-400 text-sm text-left">거래대금</th>
+          <th className="p-4 w-32 font-normal text-gray-400 text-sm text-left">시가총액</th>
         </tr>
       </thead>
       <tbody>
         {items.map((item, index) => {
-          const { className, icon } = getChangeInfo(item.changeRate);
+          const latestPrice = item.stockPriceList?.[0];
+          const changeRate = latestPrice?.changeRate ?? 0;
+          const { className, icon } = getChangeInfo(changeRate);
           return (
             <tr
-              key={item.id}
+              key={item.stockCode}
               className="hover:bg-white/5 border-white/10 border-b cursor-pointer"
-              onClick={() => navigate(`/markets/${item.code}`)}
+              onClick={() => navigate(`/markets/${item.stockCode}`)}
             >
               {/* 순번 */}
               <td className="p-4 text-gray-400 align-middle">{startIndex + index + 1}</td>
 
               {/* 종목명과 코드 */}
               <td className="p-4 align-middle">
-                <div className="font-bold">{item.name}</div>
-                <div className="text-gray-400 text-sm">{item.code}</div>
+                <div className="font-bold">{item.stockName}</div>
+                <div className="text-gray-400 text-sm">{item.stockCode}</div>
               </td>
 
               {/* 현재가 */}
               <td className={`p-4 align-middle font-bold ${className}`}>
-                {item.price.toLocaleString()}원
+                {formatNumber(latestPrice?.closePrice ?? 0)}원
               </td>
 
               {/* 등락률 */}
               <td className={`p-4 align-middle ${className}`}>
-                {icon} {Math.abs(item.changeRate).toFixed(2)}%
+                {icon} {Math.abs(changeRate).toFixed(2)}%
               </td>
 
-              {/* 거래대금 */}
-              <td className="p-4 align-middle">{item.tradeVolume}</td>
+              {/* 시가총액 */}
+              <td className="p-4 align-middle">{formatNumber(item.marketCap)}</td>
             </tr>
           );
         })}
