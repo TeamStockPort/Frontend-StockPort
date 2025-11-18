@@ -9,7 +9,7 @@ import {
   backtestFormSchema,
   type BacktestFormSchema,
 } from "@/_BacktestingPage/utils/backtestFormSchema";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { mapToBacktestRequest } from "@/_BacktestingPage/utils/mapToRequest";
 import { v4 as uuidv4 } from "uuid";
 import BacktestResult from "@/_BacktestingPage/components/BacktestResult";
@@ -36,8 +36,29 @@ const BacktestingPage = () => {
   });
   const { mutate, isPending, error, data } = usePostBacktest();
   const { progress, showResult } = useProgress({ isPending, data, error });
+  const buttonRef = useRef<HTMLDivElement>(null);
+  const resultRef = useRef<HTMLDivElement>(null);
+  const errorRef = useRef<HTMLDivElement>(null);
+
+  // 에러나 결과가 나오면 스크롤을 아래로 내리기
+  useEffect(() => {
+    if (showResult && resultRef.current) {
+      setTimeout(() => {
+        resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 100);
+    } else if (error && !isPending && errorRef.current) {
+      setTimeout(() => {
+        errorRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 100);
+    }
+  }, [showResult, error, isPending]);
 
   const handleSubmit = form.handleSubmit((formData) => {
+    // 버튼이 화면 상단에 오도록 스크롤
+    if (buttonRef.current) {
+      buttonRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
     const hasInvalidAsset = assets.some((asset) => {
       return !asset.name || !asset.ticker || asset.weight < 1 || asset.weight > 100;
     });
@@ -57,7 +78,7 @@ const BacktestingPage = () => {
   });
 
   return (
-    <div className="gap-6 px-18">
+    <div className="gap-6 mb-20 px-18">
       <Title title="자산배분 백테스트"></Title>
       <Notice></Notice>
       <Card className="bg-white/5 mb-6 border-white/10 text-white">
@@ -68,49 +89,57 @@ const BacktestingPage = () => {
           totalWeight={totalWeight}
         ></AssetAllocation>
       </Card>
-      <StartBacktestButton
-        handleSubmit={handleSubmit}
-        disabled={totalWeight !== 100 || isPending}
-      ></StartBacktestButton>
+      <div ref={buttonRef}>
+        <StartBacktestButton
+          handleSubmit={handleSubmit}
+          disabled={totalWeight !== 100 || isPending}
+        ></StartBacktestButton>
+      </div>
 
-      {/* 로딩 상태 또는 Progress 진행 중 */}
+      {/* 로딩 상태 또는 Progress 진행 중 - 전체 화면 overlay */}
       {(isPending || (progress > 0 && progress < 100)) && (
-        <Card className="bg-white/5 border-white/10 text-white">
-          <CardContent>
-            <div className="flex justify-center items-center py-16">
-              <div className="flex flex-col items-center gap-4 w-full max-w-md">
-                <Progress value={progress} className="w-full h-2" />
-                <p className="text-gray-300">백테스트를 수행 중입니다...</p>
+        <div className="z-50 fixed inset-0 flex justify-center items-center bg-black/50 backdrop-blur-sm">
+          <Card className="bg-white/10 mx-4 border-white/20 w-full max-w-md text-white">
+            <CardContent>
+              <div className="flex justify-center items-center py-16">
+                <div className="flex flex-col items-center gap-4 w-full">
+                  <Progress value={progress} className="w-full h-2" />
+                  <p className="text-gray-300">백테스트를 수행 중입니다...</p>
+                </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
       )}
 
       {/* 에러 상태 */}
       {error && !isPending && progress === 0 && (
-        <Card className="bg-white/5 border-white/10 text-white">
-          <CardContent>
-            <div className="flex justify-center items-center py-16">
-              <div className="flex flex-col items-center gap-2">
-                <p className="font-semibold text-red-400 text-xl">
-                  백테스트 수행 중 오류가 발생했습니다
-                </p>
-                <p className="text-red-300 text-center">
-                  {error instanceof Error
-                    ? error.message
-                    : (error as AxiosError<ApiErrorResponse>).response?.data?.detail ||
-                      "알 수 없는 오류가 발생했습니다."}
-                </p>
+        <div ref={errorRef}>
+          <Card className="bg-white/5 border-white/10 text-white">
+            <CardContent>
+              <div className="flex justify-center items-center py-16">
+                <div className="flex flex-col items-center gap-2">
+                  <p className="font-semibold text-red-400 text-xl">
+                    백테스트 수행 중 오류가 발생했습니다
+                  </p>
+                  <p className="text-red-300 text-center">
+                    {error instanceof Error
+                      ? error.message
+                      : (error as AxiosError<ApiErrorResponse>).response?.data?.detail ||
+                        "알 수 없는 오류가 발생했습니다."}
+                  </p>
+                </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
       )}
 
       {/* 성공 상태 - Progress가 100%가 되고 showResult가 true일 때만 렌더링 */}
       {showResult && !error && data?.isSuccess && data?.result && (
-        <BacktestResult data={data.result}></BacktestResult>
+        <div ref={resultRef}>
+          <BacktestResult data={data.result}></BacktestResult>
+        </div>
       )}
     </div>
   );
