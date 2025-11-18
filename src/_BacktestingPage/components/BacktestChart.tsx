@@ -116,7 +116,7 @@ const BacktestChart = ({
                 dataKey="value"
                 stroke={color}
                 strokeWidth={2}
-                dot={{ fill: color, r: 4 }}
+                dot={false}
                 activeDot={{ r: 6 }}
               />
             </LineChart>
