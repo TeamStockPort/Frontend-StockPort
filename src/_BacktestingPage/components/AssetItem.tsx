@@ -16,6 +16,7 @@ const AssetItem = ({ AssetIndex, asset, onUpdate, onDelete }: AssetItemProps) =>
   const wrapperRef = useRef<HTMLDivElement>(null);
   const skipSearchRef = useRef(false);
   const hasClearedRef = useRef(false);
+  const isSelectedRef = useRef(false);
 
   const debouncedQuery = useDebounce(query, 500);
 
@@ -30,10 +31,24 @@ const AssetItem = ({ AssetIndex, asset, onUpdate, onDelete }: AssetItemProps) =>
 
   // 검색 결과가 있을 때 드롭다운 열기, 값이 없으면 닫기
   useEffect(() => {
+    // 종목 선택 후에는 드롭다운을 열지 않음
+    if (isSelectedRef.current) {
+      isSelectedRef.current = false;
+      setIsDropdownOpen(false);
+      return;
+    }
+
     if (skipSearchRef.current) {
       skipSearchRef.current = false;
       return;
     }
+
+    // 선택된 종목 표시 형식 (이름 (티커))인 경우 드롭다운을 열지 않음
+    if (query.includes("(") && query.includes(")")) {
+      setIsDropdownOpen(false);
+      return;
+    }
+
     if (isLoading && debouncedQuery) {
       setIsDropdownOpen(true);
     } else if (searchResults.length > 0 && debouncedQuery) {
@@ -41,12 +56,13 @@ const AssetItem = ({ AssetIndex, asset, onUpdate, onDelete }: AssetItemProps) =>
     } else if (!debouncedQuery || (!isLoading && searchResults.length === 0)) {
       setIsDropdownOpen(false);
     }
-  }, [searchResults, debouncedQuery, isLoading]);
+  }, [searchResults, debouncedQuery, isLoading, query]);
 
   const handleSelect = (selected: SearchResult) => {
     const displayValue = `${selected.name} (${selected.ticker})`;
     onUpdate({ ...asset, name: selected.name, ticker: selected.ticker });
     skipSearchRef.current = true;
+    isSelectedRef.current = true;
     setQuery(displayValue);
     setIsDropdownOpen(false);
     hasClearedRef.current = false;
