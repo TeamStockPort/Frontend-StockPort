@@ -1,6 +1,6 @@
 import { type RouteObject } from "react-router-dom";
-import Layout from "../layouts/Layout";
-import { MainPage, MarketsPage, MarketDetailPage, PortfolioPage, BacktestingPage } from "../pages";
+import Layout from "@/layouts/Layout";
+import { MainPage, MarketsPage, MarketDetailPage, PortfolioPage, BacktestingPage } from "@/pages";
 
 export const routes: RouteObject[] = [
   {

@@ -1,10 +1,3 @@
-export type BacktestFormValues = {
-  start_date: string; // "2010-01-01"
-  end_date: string; // "2020-12-31"
-  rebalance_frequency: "매년" | "분기별" | "매월";
-  initial_amount: number;
-};
-
 export type Asset = {
   id: string;
   ticker: string;
@@ -13,12 +6,15 @@ export type Asset = {
 };
 
 export type AssetRequest = {
-  name: string;
-  ticker: string;
+  stockCd: string;
   weight: number;
 };
 
-export type BacktestRequest = BacktestFormValues & {
+export type BacktestRequest = {
+  startDate: string; // "2017-11-18"
+  endDate: string; // "2025-11-18"
+  initialCapital: number;
+  rebalanceCycle: "YEARLY" | "QUARTERLY" | "MONTHLY";
   assets: AssetRequest[];
 };
 
@@ -26,3 +22,29 @@ export type SearchResult = {
   ticker: string;
   name: string;
 };
+
+// 백테스팅 결과 타입
+export interface PortfolioSummary {
+  portfolioName: string;
+  initialCapital: number;
+  finalCapital: number;
+  cagr: number;
+  maxDrawdown: number;
+  volatility: number;
+  sharpeRatio: number;
+  sortinoRatio: number;
+}
+
+export interface MonthlyData {
+  date: string;
+  value: number;
+}
+
+export interface BacktestResult {
+  kospiSummary: PortfolioSummary;
+  kosdaqSummary: PortfolioSummary;
+  portfolioSummary: PortfolioSummary;
+  monthlyDrawdowns: MonthlyData[];
+  monthlyAssets: MonthlyData[];
+  monthlyReturns: MonthlyData[];
+}

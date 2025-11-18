@@ -5,7 +5,20 @@ interface PaginationProps {
 }
 
 const Pagination = ({ currentPage, totalPages, onPageChange }: PaginationProps) => {
-  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+  // 현재 페이지가 속한 5단위 그룹 계산
+  const getVisiblePages = () => {
+    const groupSize = 5;
+    // 현재 페이지가 속한 그룹 번호 (1부터 시작)
+    const groupNumber = Math.ceil(currentPage / groupSize);
+    // 그룹의 시작 페이지
+    const startPage = (groupNumber - 1) * groupSize + 1;
+    // 그룹의 끝 페이지 (totalPages를 넘지 않도록)
+    const endPage = Math.min(groupNumber * groupSize, totalPages);
+
+    return Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
+  };
+
+  const visiblePages = getVisiblePages();
 
   return (
     <nav className="flex justify-center items-center gap-2 mt-8 pb-8">
@@ -16,7 +29,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }: PaginationProps) 
       >
         &lt;
       </button>
-      {pageNumbers.map((number) => (
+      {visiblePages.map((number) => (
         <button
           key={number}
           className={`px-4 py-2 rounded-md ${

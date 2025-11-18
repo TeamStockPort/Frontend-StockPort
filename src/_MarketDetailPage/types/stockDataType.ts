@@ -1,14 +1,24 @@
-export interface StockData {
-  name: string;
-  code: string;
-  currentPrice: number;
-  change: "RISE" | "FALL" | "EVEN";
-  changeAmount: number;
-  changeRate: number;
-  prevClosePrice: number;
+export interface StockPriceList {
+  baseDate: string;
+  openPrice: number;
+  closePrice: number;
   highPrice: number;
   lowPrice: number;
-  tradeVolume: number;
-  tradeValue: number;
-  openPrice: number;
+  changeAmount: number;
+  changeRate: number;
 }
+
+export interface StockData {
+  stockCode: string;
+  stockName: string;
+  isinCode: string;
+  market: string;
+  listedDate: string;
+  listedShares: number;
+  marketCap: number;
+  currentPrice: number;
+  stockPriceList: StockPriceList[];
+}
+
+export type Period = "1W" | "1M" | "1Y" | "10Y";
+export type ChartType = "candlestick" | "line";

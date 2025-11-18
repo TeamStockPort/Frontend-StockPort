@@ -1,19 +1,25 @@
+import { Button } from "@/components/ui/button";
+
 type StartBacktestButtonProps = {
   handleSubmit: () => void;
   disabled: boolean;
 };
+
 const StartBacktestButton = ({ handleSubmit, disabled }: StartBacktestButtonProps) => {
   return (
-    <div className="flex justify-center items-center hover:opacity-70 my-3">
-      <button
-        className={`flex justify-center items-center mt-2.5 rounded-xl w-40 h-10 font-[21rem] font-suit ${
-          disabled ? "bg-gray-300 text-gray-500" : "bg-white text-navy"
-        }`}
-        disabled={disabled}
+    <div className="flex justify-center items-center mb-6">
+      <Button
         onClick={handleSubmit}
+        disabled={disabled}
+        size="lg"
+        className={`px-8 py-6 rounded-xl text-base font-semibold transition-all duration-200 ${
+          disabled
+            ? "bg-white/10 border-white/20 text-gray-400 cursor-not-allowed"
+            : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 border-0 text-white shadow-lg hover:shadow-xl"
+        }`}
       >
         백테스트 시작
-      </button>
+      </Button>
     </div>
   );
 };

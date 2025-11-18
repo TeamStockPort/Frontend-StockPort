@@ -1,45 +1,41 @@
-import { useState, useEffect, useMemo } from "react";
-import MarketList from "../_MarketsPage/components/MarketList";
-import { MOCK_DATA } from "../_MarketsPage/datas/MarketMockData";
-import type { MarketItem } from "../_MarketsPage/types/marketItem";
-import Pagination from "../components/Pagination";
-import Title from "../components/Title";
+import { useState, useMemo } from "react";
+import MarketList from "@/_MarketsPage/components/MarketList";
+import type { StockListResponse } from "@/_MarketsPage/types/marketItem";
+import Pagination from "@/components/Pagination";
+import Title from "@/components/Title";
+import { useGetStockList } from "@/lib/hooks/useGetStockList";
+import { Spinner } from "@/components/ui/spinner";
 
 const ITEMS_PER_PAGE = 10;
-const CATEGORIES = ["거래대금", "거래량", "급상승", "급하락", "인기"];
 
 const MarketsPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [marketData, setMarketData] = useState<MarketItem[]>([]);
-  const [activeCategory, setActiveCategory] = useState("거래대금");
 
-  // 주가 데이터 로딩
-  useEffect(() => {
-    // TODO: 백엔드 API 호출
-    setMarketData(MOCK_DATA);
-  }, []);
+  // 주가 데이터 로딩 (페이지는 0부터 시작하는 경우가 많으므로 currentPage - 1 전달)
+  const {
+    data: stockListResponse,
+    isLoading,
+    error,
+  } = useGetStockList(currentPage - 1, ITEMS_PER_PAGE);
 
-  // 카테고리 변경 시 데이터 정렬 로직
-  const sortedData = useMemo(() => {
-    const data = [...marketData];
-    switch (activeCategory) {
-      case "급상승":
-        return data.sort((a, b) => b.changeRate - a.changeRate);
-      case "급하락":
-        return data.sort((a, b) => a.changeRate - b.changeRate);
-      // TODO: '거래대금', '거래량', '인기'에 대한 정렬 로직 구현
-      case "거래대금":
-      default:
-        return data;
+  // API 응답에서 content 추출 (타입 변환 없이 직접 사용)
+  const stockList = useMemo(() => {
+    if (!stockListResponse) return [];
+    const response = stockListResponse as StockListResponse;
+    return response.content || [];
+  }, [stockListResponse]);
+
+  // 전체 페이지 수 계산
+  const totalPages = useMemo(() => {
+    const response = stockListResponse as StockListResponse | undefined;
+    if (response?.totalPages !== undefined) {
+      return response.totalPages;
     }
-  }, [activeCategory, marketData]);
-
-  // 페이지네이션 계산
-  const totalPages = Math.ceil(sortedData.length / ITEMS_PER_PAGE);
-  const currentItems = sortedData.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
-  );
+    if (response?.totalElements !== undefined) {
+      return Math.ceil(response.totalElements / ITEMS_PER_PAGE);
+    }
+    return 0;
+  }, [stockListResponse]);
 
   const handlePageChange = (page: number) => {
     if (page > 0 && page <= totalPages) {
@@ -47,35 +43,42 @@ const MarketsPage = () => {
     }
   };
 
+  // 로딩 상태
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center px-6 md:px-12 min-h-screen font-sans text-white">
+        <Spinner className="size-12" />
+      </div>
+    );
+  }
+
+  // 에러 상태
+  if (error) {
+    return (
+      <div className="flex justify-center items-center px-6 md:px-12 min-h-screen font-sans text-white">
+        <div className="text-red-500 text-xl">데이터를 불러오는 중 오류가 발생했습니다.</div>
+      </div>
+    );
+  }
+
   return (
     <div className="px-6 md:px-12 min-h-screen font-sans text-white">
       <Title title="국내 시장"></Title>
 
       <main>
-        {/* 카테고리 필터 */}
-        <div className="flex items-center gap-4 mb-6 border-white/10 border-b">
-          {CATEGORIES.map((category) => (
-            <button
-              key={category}
-              onClick={() => setActiveCategory(category)}
-              className={`py-3 px-2 text-md transition-colors duration-200 cursor-pointer ${
-                activeCategory === category
-                  ? "text-white border-b-2 border-white"
-                  : "text-gray-400 hover:text-white"
-              }`}
-            >
-              {category}
-            </button>
-          ))}
-        </div>
-
-        <MarketList items={currentItems} currentPage={currentPage} itemsPerPage={ITEMS_PER_PAGE} />
-
-        <Pagination
+        <MarketList
+          items={stockList || []}
           currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
+          itemsPerPage={ITEMS_PER_PAGE}
         />
+
+        {totalPages > 0 && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        )}
       </main>
     </div>
   );

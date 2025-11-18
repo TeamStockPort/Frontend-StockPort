@@ -1,6 +1,6 @@
-import Logo from "./Logo";
-import NavItem from "./NavItem";
-import SearchBar from "./SearchBar";
+import Logo from "@/components/Navbar/Logo";
+import NavItem from "@/components/Navbar/NavItem";
+import SearchBar from "@/components/Navbar/SearchBar";
 
 const Navbar = () => {
   return (

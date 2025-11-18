@@ -2,3 +2,4 @@ node_modules
 dist
 build
 README.md
+pnpm-lock.yaml
