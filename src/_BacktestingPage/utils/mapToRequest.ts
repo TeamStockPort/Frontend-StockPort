@@ -5,14 +5,21 @@ import type { Asset, BacktestRequest } from "@/_BacktestingPage/types/backtestFo
 export function mapToBacktestRequest(values: BacktestFormSchema, assets: Asset[]): BacktestRequest {
   const formatDate = (date: Date) => date.toLocaleDateString("sv-SE");
 
+  // 리밸런싱 주기를 영어로 변환
+  const rebalanceCycleMap: Record<"매년" | "분기별" | "매월", "YEARLY" | "QUARTERLY" | "MONTHLY"> =
+    {
+      매년: "YEARLY",
+      분기별: "QUARTERLY",
+      매월: "MONTHLY",
+    };
+
   return {
-    start_date: formatDate(values.startDate),
-    end_date: formatDate(values.endDate),
-    initial_amount: values.initialAmount,
-    rebalance_frequency: values.rebalanceFrequency,
-    assets: assets.map(({ name, ticker, weight }) => ({
-      name,
-      ticker,
+    startDate: formatDate(values.startDate),
+    endDate: formatDate(values.endDate),
+    initialCapital: values.initialAmount * 10000, // 만원 단위를 원 단위로 변환
+    rebalanceCycle: rebalanceCycleMap[values.rebalanceFrequency],
+    assets: assets.map(({ ticker, weight }) => ({
+      stockCd: ticker,
       weight,
     })),
   };

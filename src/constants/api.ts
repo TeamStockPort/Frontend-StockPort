@@ -19,4 +19,5 @@ export const API_ENDPOINTS = {
   },
   stockList: (page: number, size: number) =>
     `/api/stock/market-cap?page=${page}&size=${size}&sort=marketCap%2CDESC`,
+  backtest: () => `/api/backtest`,
 };
