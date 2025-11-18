@@ -18,8 +18,9 @@ export const getIndexData = async (marketType: "KOSPI" | "KOSDAQ"): Promise<Mark
     API_ENDPOINTS.indexPeriod(marketType, startDate, endDate)
   );
 
-  if (!response.data.isSuccess) {
-    throw new Error(response.data.message);
+  if (response.data.isSuccess === false) {
+    const errorMessage = response.data.message || "지수 데이터 조회 중 오류가 발생했습니다.";
+    throw new Error(errorMessage);
   }
 
   // ApiResponse의 result 필드 반환

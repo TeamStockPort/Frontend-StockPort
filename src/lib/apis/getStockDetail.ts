@@ -25,8 +25,9 @@ export const getStockDetail = async (stockCode: string, period: Period) => {
 
   const response = await instance.get(API_ENDPOINTS.stockData(stockCode, startDate, endDate));
 
-  if (!response.data.isSuccess) {
-    throw new Error(response.data.message);
+  if (response.data.isSuccess === false) {
+    const errorMessage = response.data.message || "주식 상세 데이터 조회 중 오류가 발생했습니다.";
+    throw new Error(errorMessage);
   }
 
   return response.data.result as StockData;
