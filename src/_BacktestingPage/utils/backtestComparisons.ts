@@ -1,5 +1,10 @@
 import type { BacktestResult as BacktestResultType } from "@/_BacktestingPage/types/backtestFormType";
-import { calculateReturnRate, formatPercentage, formatRatio, formatCapital } from "./backtestFormatters";
+import {
+  calculateReturnRate,
+  formatPercentage,
+  formatRatio,
+  formatCapital,
+} from "./backtestFormatters";
 
 /**
  * 포트폴리오가 벤치마크보다 더 좋은지 판단
@@ -115,4 +120,3 @@ export const createComparisonRows = (data: BacktestResultType): ComparisonRow[] 
     },
   ];
 };
-

@@ -27,4 +27,3 @@ export const formatCapital = (value: number): string => {
 export const calculateReturnRate = (initialCapital: number, finalCapital: number): number => {
   return ((finalCapital - initialCapital) / initialCapital) * 100;
 };
-

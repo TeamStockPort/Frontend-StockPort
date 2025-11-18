@@ -24,18 +24,24 @@ export const backtestFormSchema = z
     message: "시작일은 종료일보다 이전이어야 합니다.",
     path: ["startDate"],
   })
-  .refine((data) => {
-    const monthsDiff = differenceInMonths(data.endDate, data.startDate);
-    return monthsDiff >= MIN_MONTHS_DIFF;
-  }, {
-    message: `시작일은 종료일보다 최소 ${MIN_MONTHS_DIFF}개월 전이어야 합니다.`,
-    path: ["startDate"],
-  })
-  .refine((data) => {
-    const yearsDiff = differenceInYears(data.endDate, data.startDate);
-    return yearsDiff <= MAX_YEARS_DIFF;
-  }, {
-    message: `시작일은 종료일보다 최대 ${MAX_YEARS_DIFF}년 전까지 가능합니다.`,
-    path: ["startDate"],
-  });
+  .refine(
+    (data) => {
+      const monthsDiff = differenceInMonths(data.endDate, data.startDate);
+      return monthsDiff >= MIN_MONTHS_DIFF;
+    },
+    {
+      message: `시작일은 종료일보다 최소 ${MIN_MONTHS_DIFF}개월 전이어야 합니다.`,
+      path: ["startDate"],
+    }
+  )
+  .refine(
+    (data) => {
+      const yearsDiff = differenceInYears(data.endDate, data.startDate);
+      return yearsDiff <= MAX_YEARS_DIFF;
+    },
+    {
+      message: `시작일은 종료일보다 최대 ${MAX_YEARS_DIFF}년 전까지 가능합니다.`,
+      path: ["startDate"],
+    }
+  );
 export type BacktestFormSchema = z.infer<typeof backtestFormSchema>;
