@@ -29,7 +29,7 @@ const BacktestingPage = () => {
     resolver: zodResolver(backtestFormSchema),
     defaultValues: {
       startDate: new Date(),
-      endDate: new Date(),
+      endDate: new Date(new Date().setDate(new Date().getDate() - 1)),
       initialAmount: 1000,
       rebalanceFrequency: "매년",
     },
