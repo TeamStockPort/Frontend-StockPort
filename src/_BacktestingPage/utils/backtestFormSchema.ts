@@ -1,15 +1,15 @@
 import { z } from "zod";
-import { differenceInMonths, differenceInYears } from "date-fns";
+import { differenceInMonths, differenceInYears, subYears } from "date-fns";
 
-const MIN_DATE = new Date("1900-01-01");
 const TODAY = new Date();
+const MIN_DATE = subYears(TODAY, 10); // 오늘 기준 10년 전
 const MIN_MONTHS_DIFF = 3; // 최소 3개월
 const MAX_YEARS_DIFF = 10; // 최대 10년
 
 export const backtestFormSchema = z
   .object({
     startDate: z.date().refine((date) => date >= MIN_DATE, {
-      message: "시작일은 1900-01-01 이후여야 합니다.",
+      message: "시작일은 오늘 기준 10년 이내여야 합니다.",
     }),
     endDate: z.date().refine((date) => date <= TODAY, {
       message: "종료일은 오늘 이전이어야 합니다.",
