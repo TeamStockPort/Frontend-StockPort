@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import type { ApiResponse } from "@/lib/apis/types";
 
 interface UseProgressProps {
   isPending: boolean;
@@ -9,6 +10,10 @@ interface UseProgressProps {
 export const useProgress = ({ isPending, data, error }: UseProgressProps) => {
   const [progress, setProgress] = useState(0);
   const [showResult, setShowResult] = useState(false);
+
+  // data가 ApiResponse 형식이고 isSuccess가 false인지 확인
+  const isErrorResponse =
+    data && typeof data === "object" && "isSuccess" in data && data.isSuccess === false;
 
   // Progress 진행률 관리
   useEffect(() => {
@@ -31,16 +36,19 @@ export const useProgress = ({ isPending, data, error }: UseProgressProps) => {
       timer2 = setTimeout(() => {
         setProgress(66);
       }, 500);
-    } else if (data && !error) {
-      // 응답이 오면 100%로 진행
-      timer3 = setTimeout(() => {
-        setProgress(100);
-        // 100%가 된 후 데이터 렌더링
-        timer4 = setTimeout(() => {
-          setShowResult(true);
-        }, 350);
-      }, 100);
-    } else if (error) {
+    } else if (data && !error && !isErrorResponse) {
+      // 응답이 오고 에러가 아니며 isSuccess가 true인 경우에만 100%로 진행
+      const apiData = data as ApiResponse<unknown>;
+      if (apiData.isSuccess !== false) {
+        timer3 = setTimeout(() => {
+          setProgress(100);
+          // 100%가 된 후 데이터 렌더링
+          timer4 = setTimeout(() => {
+            setShowResult(true);
+          }, 350);
+        }, 100);
+      }
+    } else if (error || isErrorResponse) {
       // 에러 발생 시 progress 초기화
       setProgress(0);
       setShowResult(false);
@@ -52,7 +60,7 @@ export const useProgress = ({ isPending, data, error }: UseProgressProps) => {
       if (timer3) clearTimeout(timer3);
       if (timer4) clearTimeout(timer4);
     };
-  }, [isPending, data, error]);
+  }, [isPending, data, error, isErrorResponse]);
 
   return { progress, showResult };
 };
