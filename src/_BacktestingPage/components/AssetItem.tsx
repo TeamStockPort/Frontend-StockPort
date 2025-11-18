@@ -62,13 +62,11 @@ const AssetItem = ({ AssetIndex, asset, onUpdate, onDelete }: AssetItemProps) =>
   }, []);
 
   return (
-    <div ref={wrapperRef} className="relative flex mx-10">
-      <div className="relative flex items-center w-55 font-suit text-2xl">
-        자산 {AssetIndex + 1}
-      </div>
+    <div ref={wrapperRef} className="relative flex items-center gap-4">
+      <div className="w-20 font-medium text-gray-300 text-sm">자산 {AssetIndex + 1}</div>
 
       <input
-        className="relative flex px-2 py-1 border rounded w-60 h-11"
+        className="flex-1 bg-white/10 focus:bg-white/15 px-3 py-2 border border-white/20 focus:border-white/30 rounded-lg focus:outline-none h-10 text-white placeholder:text-gray-500 transition-colors"
         value={query}
         onChange={(e) => {
           setQuery(e.target.value);
@@ -87,21 +85,22 @@ const AssetItem = ({ AssetIndex, asset, onUpdate, onDelete }: AssetItemProps) =>
       />
 
       {isDropdownOpen && searchResults.length > 0 && (
-        <div className="top-full left-55 z-20 absolute flex flex-col items-center bg-navy mt-2 border rounded w-60 max-h-[240px] overflow-y-auto text-[#E0E6ED] cursor-pointer">
+        <div className="top-full left-20 z-20 absolute flex flex-col bg-white/95 shadow-xl backdrop-blur-sm mt-2 border border-white/20 rounded-lg w-[calc(100%-5rem)] max-h-[240px] overflow-y-auto">
           {searchResults.map((item) => (
             <div
               key={item.ticker}
-              className="flex hover:bg-[#182c4d] px-2 py-1 w-full"
+              className="flex hover:bg-white/10 px-4 py-2 transition-colors cursor-pointer"
               onClick={() => handleSelect(item)}
             >
-              {item.name} ({item.ticker})
+              <span className="text-gray-900">{item.name}</span>
+              <span className="ml-2 text-gray-600">({item.ticker})</span>
             </div>
           ))}
         </div>
       )}
       <input
         type="number"
-        className="relative flex ml-4 px-2 py-1 border rounded w-24 h-11"
+        className="bg-white/10 focus:bg-white/15 px-3 py-2 border border-white/20 focus:border-white/30 rounded-lg focus:outline-none w-24 h-10 text-white placeholder:text-gray-500 transition-colors"
         value={asset.weight === 0 ? "" : asset.weight}
         onChange={(e) => {
           const newWeight = Math.max(0, Math.min(100, Number(e.target.value)));
@@ -111,7 +110,7 @@ const AssetItem = ({ AssetIndex, asset, onUpdate, onDelete }: AssetItemProps) =>
       />
       {AssetIndex !== 0 ? (
         <button
-          className="flex justify-center items-center hover:bg-blue-950 px-4 py-1 rounded-3xl font-suit text-l text-white"
+          className="flex justify-center items-center hover:bg-white/10 px-4 py-2 border border-white/20 rounded-lg h-10 text-white transition-colors"
           onClick={onDelete}
         >
           X

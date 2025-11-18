@@ -26,7 +26,7 @@ export function DatePicker<
         <Button
           variant="outline"
           data-empty={!field.value}
-          className="justify-start w-50 font-suit text-navy data-[empty=true]:text-muted-foreground text-left"
+          className="justify-start bg-white/10 hover:bg-white/15 border-white/20 w-50 h-10 text-white data-[empty=true]:text-gray-500 text-left"
         >
           <CalendarIcon className="mr-2 w-4 h-4" />
           {field.value ? format(field.value, "yyyy-MM-dd") : <span>날짜 선택</span>}

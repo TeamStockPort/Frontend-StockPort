@@ -14,6 +14,7 @@ import { mapToBacktestRequest } from "@/_BacktestingPage/utils/mapToRequest";
 import { v4 as uuidv4 } from "uuid";
 import BacktestResult from "@/_BacktestingPage/components/BacktestResult";
 import { MOCK_BACKTEST_RESULT } from "@/constants/mockBacktest";
+import { Card } from "@/components/ui/card";
 
 const BacktestingPage = () => {
   const [assets, setAssets] = useState([{ id: uuidv4(), name: "", ticker: "", weight: 0 }]);
@@ -67,15 +68,17 @@ ${requestData.assets
   };
 
   return (
-    <div className="gap-2 px-18">
+    <div className="gap-6 px-18">
       <Title title="자산배분 백테스트"></Title>
       <Notice></Notice>
-      <BacktestForm form={form}></BacktestForm>
-      <AssetAllocation
-        assets={assets}
-        setAssets={setAssets}
-        totalWeight={totalWeight}
-      ></AssetAllocation>
+      <Card className="bg-white/5 mb-6 border-white/10 text-white">
+        <BacktestForm form={form}></BacktestForm>
+        <AssetAllocation
+          assets={assets}
+          setAssets={setAssets}
+          totalWeight={totalWeight}
+        ></AssetAllocation>
+      </Card>
       <StartBacktestButton
         handleSubmit={handleSubmit}
         disabled={totalWeight !== 100}
