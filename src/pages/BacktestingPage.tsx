@@ -13,8 +13,12 @@ import { useState, useMemo } from "react";
 import { mapToBacktestRequest } from "@/_BacktestingPage/utils/mapToRequest";
 import { v4 as uuidv4 } from "uuid";
 import BacktestResult from "@/_BacktestingPage/components/BacktestResult";
-import { MOCK_BACKTEST_RESULT } from "@/constants/mockBacktest";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
+import { usePostBacktest } from "@/lib/hooks/usePostBacktest";
+import { Progress } from "@/components/ui/progress";
+import { useProgress } from "@/_BacktestingPage/hooks/useProgress";
+import type { AxiosError } from "axios";
+import type { ApiErrorResponse } from "@/lib/apis/types";
 
 const BacktestingPage = () => {
   const [assets, setAssets] = useState([{ id: uuidv4(), name: "", ticker: "", weight: 0 }]);
@@ -30,7 +34,10 @@ const BacktestingPage = () => {
       rebalanceFrequency: "매년",
     },
   });
-  const handleSubmit = () => {
+  const { mutate, isPending, error, data } = usePostBacktest();
+  const { progress, showResult } = useProgress({ isPending, data, error });
+
+  const handleSubmit = form.handleSubmit((formData) => {
     const hasInvalidAsset = assets.some((asset) => {
       return !asset.name || !asset.ticker || asset.weight < 1 || asset.weight > 100;
     });
@@ -45,27 +52,9 @@ const BacktestingPage = () => {
       return;
     }
 
-    const formData = form.getValues();
     const requestData = mapToBacktestRequest(formData, assets);
-    // TODO: 백테스트 API 호출 로직 추가
-    const message = `
-📊 백테스트 요청 데이터
-
-시작일: ${requestData.start_date}
-종료일: ${requestData.end_date}
-초기금액: ${requestData.initial_amount} 만원
-리밸런싱 주기: ${requestData.rebalance_frequency}
-
-📈 자산 목록:
-${requestData.assets
-  .map(
-    (asset, idx) => `  ${idx + 1}. 종목명: ${asset.name} (${asset.ticker}), 비중: ${asset.weight}%`
-  )
-  .join("\n")}
-`;
-
-    alert(message);
-  };
+    mutate(requestData);
+  });
 
   return (
     <div className="gap-6 px-18">
@@ -81,9 +70,48 @@ ${requestData.assets
       </Card>
       <StartBacktestButton
         handleSubmit={handleSubmit}
-        disabled={totalWeight !== 100}
+        disabled={totalWeight !== 100 || isPending}
       ></StartBacktestButton>
-      <BacktestResult data={MOCK_BACKTEST_RESULT}></BacktestResult>
+
+      {/* 로딩 상태 또는 Progress 진행 중 */}
+      {(isPending || (progress > 0 && progress < 100)) && (
+        <Card className="bg-white/5 border-white/10 text-white">
+          <CardContent>
+            <div className="flex justify-center items-center py-16">
+              <div className="flex flex-col items-center gap-4 w-full max-w-md">
+                <Progress value={progress} className="w-full h-2" />
+                <p className="text-gray-300">백테스트를 수행 중입니다...</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* 에러 상태 */}
+      {error && !isPending && progress === 0 && (
+        <Card className="bg-white/5 border-white/10 text-white">
+          <CardContent>
+            <div className="flex justify-center items-center py-16">
+              <div className="flex flex-col items-center gap-2">
+                <p className="font-semibold text-red-400 text-xl">
+                  백테스트 수행 중 오류가 발생했습니다
+                </p>
+                <p className="text-red-300 text-center">
+                  {error instanceof Error
+                    ? error.message
+                    : (error as AxiosError<ApiErrorResponse>).response?.data?.detail ||
+                      "알 수 없는 오류가 발생했습니다."}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* 성공 상태 - Progress가 100%가 되고 showResult가 true일 때만 렌더링 */}
+      {showResult && !error && data?.isSuccess && data?.result && (
+        <BacktestResult data={data.result}></BacktestResult>
+      )}
     </div>
   );
 };
