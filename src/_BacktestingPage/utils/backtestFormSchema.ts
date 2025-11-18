@@ -1,6 +1,10 @@
 import { z } from "zod";
+import { differenceInMonths, differenceInYears } from "date-fns";
+
 const MIN_DATE = new Date("1900-01-01");
 const TODAY = new Date();
+const MIN_MONTHS_DIFF = 3; // 최소 3개월
+const MAX_YEARS_DIFF = 10; // 최대 10년
 
 export const backtestFormSchema = z
   .object({
@@ -18,6 +22,20 @@ export const backtestFormSchema = z
   })
   .refine((data) => data.startDate <= data.endDate, {
     message: "시작일은 종료일보다 이전이어야 합니다.",
+    path: ["startDate"],
+  })
+  .refine((data) => {
+    const monthsDiff = differenceInMonths(data.endDate, data.startDate);
+    return monthsDiff >= MIN_MONTHS_DIFF;
+  }, {
+    message: `시작일은 종료일보다 최소 ${MIN_MONTHS_DIFF}개월 전이어야 합니다.`,
+    path: ["startDate"],
+  })
+  .refine((data) => {
+    const yearsDiff = differenceInYears(data.endDate, data.startDate);
+    return yearsDiff <= MAX_YEARS_DIFF;
+  }, {
+    message: `시작일은 종료일보다 최대 ${MAX_YEARS_DIFF}년 전까지 가능합니다.`,
     path: ["startDate"],
   });
 export type BacktestFormSchema = z.infer<typeof backtestFormSchema>;
