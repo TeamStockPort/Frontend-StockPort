@@ -25,12 +25,12 @@ export const useProgress = ({ isPending, data, error }: UseProgressProps) => {
       // 33%까지 300ms 동안 진행
       timer1 = setTimeout(() => {
         setProgress(33);
-      }, 300);
+      }, 100);
 
       // 66%까지 진행 (응답 대기)
       timer2 = setTimeout(() => {
         setProgress(66);
-      }, 200);
+      }, 500);
     } else if (data && !error) {
       // 응답이 오면 100%로 진행
       timer3 = setTimeout(() => {
@@ -38,7 +38,7 @@ export const useProgress = ({ isPending, data, error }: UseProgressProps) => {
         // 100%가 된 후 데이터 렌더링
         timer4 = setTimeout(() => {
           setShowResult(true);
-        }, 300);
+        }, 350);
       }, 100);
     } else if (error) {
       // 에러 발생 시 progress 초기화
@@ -56,4 +56,3 @@ export const useProgress = ({ isPending, data, error }: UseProgressProps) => {
 
   return { progress, showResult };
 };
-
