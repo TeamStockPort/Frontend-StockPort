@@ -6,11 +6,12 @@ export function mapToBacktestRequest(values: BacktestFormSchema, assets: Asset[]
   const formatDate = (date: Date) => date.toLocaleDateString("sv-SE");
 
   // 리밸런싱 주기를 영어로 변환
-  const rebalanceCycleMap: Record<"매년" | "분기별" | "매월", "YEARLY" | "QUARTERLY" | "MONTHLY"> = {
-    매년: "YEARLY",
-    분기별: "QUARTERLY",
-    매월: "MONTHLY",
-  };
+  const rebalanceCycleMap: Record<"매년" | "분기별" | "매월", "YEARLY" | "QUARTERLY" | "MONTHLY"> =
+    {
+      매년: "YEARLY",
+      분기별: "QUARTERLY",
+      매월: "MONTHLY",
+    };
 
   return {
     startDate: formatDate(values.startDate),
