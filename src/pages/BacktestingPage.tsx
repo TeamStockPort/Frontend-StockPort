@@ -12,6 +12,8 @@ import {
 import { useState, useMemo } from "react";
 import { mapToBacktestRequest } from "@/_BacktestingPage/utils/mapToRequest";
 import { v4 as uuidv4 } from "uuid";
+import BacktestResult from "@/_BacktestingPage/components/BacktestResult";
+import { MOCK_BACKTEST_RESULT } from "@/constants/mockBacktest";
 
 const BacktestingPage = () => {
   const [assets, setAssets] = useState([{ id: uuidv4(), name: "", ticker: "", weight: 0 }]);
@@ -78,6 +80,7 @@ ${requestData.assets
         handleSubmit={handleSubmit}
         disabled={totalWeight !== 100}
       ></StartBacktestButton>
+      <BacktestResult data={MOCK_BACKTEST_RESULT}></BacktestResult>
     </div>
   );
 };
