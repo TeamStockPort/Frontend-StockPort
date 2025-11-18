@@ -69,6 +69,25 @@ const BacktestChart = ({
     return null;
   };
 
+  // Y축 포맷터 - 자산 추이의 경우 더 간결하게 표시
+  const yAxisFormatter = (value: number): string => {
+    if (label === "월별 자산 추이") {
+      // 억 단위로 표시
+      if (value >= 100000000) {
+        return `${(value / 100000000).toFixed(1)}억`;
+      }
+      // 천만 단위로 표시
+      if (value >= 10000000) {
+        return `${(value / 10000000).toFixed(1)}천만`;
+      }
+      // 만 단위로 표시
+      if (value >= 10000) {
+        return `${(value / 10000).toFixed(1)}만`;
+      }
+    }
+    return valueFormatter(value);
+  };
+
   return (
     <Card className="bg-white/5 border-white/10 text-white">
       <CardHeader>
@@ -89,7 +108,7 @@ const BacktestChart = ({
                 stroke="#9aa0a6"
                 style={{ fontSize: "12px" }}
                 tick={{ fill: "#9aa0a6" }}
-                tickFormatter={valueFormatter}
+                tickFormatter={yAxisFormatter}
               />
               <Tooltip content={<CustomTooltip />} />
               <Line
@@ -97,7 +116,7 @@ const BacktestChart = ({
                 dataKey="value"
                 stroke={color}
                 strokeWidth={2}
-                dot={{ fill: color, r: 4 }}
+                dot={false}
                 activeDot={{ r: 6 }}
               />
             </LineChart>

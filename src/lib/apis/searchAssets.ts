@@ -12,8 +12,9 @@ export const searchAssets = async (keyword: string) => {
     API_ENDPOINTS.searchAssets(keyword.trim())
   );
 
-  if (!response.data.isSuccess) {
-    throw new Error(response.data.message);
+  if (response.data.isSuccess === false) {
+    const errorMessage = response.data.message || "종목 검색 중 오류가 발생했습니다.";
+    throw new Error(errorMessage);
   }
   return response.data.result;
 };

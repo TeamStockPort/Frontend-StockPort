@@ -40,18 +40,29 @@ const BacktestingPage = () => {
   const resultRef = useRef<HTMLDivElement>(null);
   const errorRef = useRef<HTMLDivElement>(null);
 
+  // isSuccess가 false인 경우도 에러로 처리
+  const hasError = error || (data && data.isSuccess === false);
+  const errorMessage = error
+    ? error instanceof Error
+      ? error.message
+      : (error as AxiosError<ApiErrorResponse>).response?.data?.detail ||
+        "알 수 없는 오류가 발생했습니다."
+    : data && data.isSuccess === false
+      ? data.message || "백테스트 수행 중 오류가 발생했습니다."
+      : "";
+
   // 에러나 결과가 나오면 스크롤을 아래로 내리기
   useEffect(() => {
     if (showResult && resultRef.current) {
       setTimeout(() => {
         resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
       }, 100);
-    } else if (error && !isPending && errorRef.current) {
+    } else if (hasError && !isPending && errorRef.current) {
       setTimeout(() => {
         errorRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
       }, 100);
     }
-  }, [showResult, error, isPending]);
+  }, [showResult, hasError, isPending]);
 
   const handleSubmit = form.handleSubmit((formData) => {
     // 버튼이 화면 상단에 오도록 스크롤
@@ -112,8 +123,8 @@ const BacktestingPage = () => {
         </div>
       )}
 
-      {/* 에러 상태 */}
-      {error && !isPending && progress === 0 && (
+      {/* 에러 상태 - error가 있거나 data.isSuccess가 false인 경우 */}
+      {hasError && !isPending && progress === 0 && (
         <div ref={errorRef}>
           <Card className="bg-white/5 border-white/10 text-white">
             <CardContent>
@@ -122,12 +133,7 @@ const BacktestingPage = () => {
                   <p className="font-semibold text-red-400 text-xl">
                     백테스트 수행 중 오류가 발생했습니다
                   </p>
-                  <p className="text-red-300 text-center">
-                    {error instanceof Error
-                      ? error.message
-                      : (error as AxiosError<ApiErrorResponse>).response?.data?.detail ||
-                        "알 수 없는 오류가 발생했습니다."}
-                  </p>
+                  <p className="text-red-300 text-center">{errorMessage}</p>
                 </div>
               </div>
             </CardContent>
