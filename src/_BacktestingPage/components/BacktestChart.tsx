@@ -8,6 +8,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import type { TooltipProps } from "recharts";
 import type { MonthlyData } from "@/_BacktestingPage/types/backtestFormType";
 import { formatNumber } from "@/lib/utils";
 
@@ -17,6 +18,18 @@ interface BacktestChartProps {
   color?: string;
   valueFormatter?: (value: number) => string;
 }
+
+interface ChartDataPoint {
+  date: string;
+  value: number;
+}
+
+type CustomTooltipProps = TooltipProps<number, string> & {
+  payload?: Array<{
+    value: number;
+    payload: ChartDataPoint;
+  }>;
+};
 
 const BacktestChart = ({
   data,
@@ -39,16 +52,19 @@ const BacktestChart = ({
   }));
 
   // 커스텀 툴팁
-  const CustomTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-white/90 shadow-lg backdrop-blur-sm p-3 border border-white/20 rounded-lg">
-          <p className="mb-1 font-semibold text-gray-900">{payload[0].payload.date}</p>
-          <p className="font-medium text-gray-700">
-            {label}: <span className="text-gray-900">{valueFormatter(payload[0].value)}</span>
-          </p>
-        </div>
-      );
+  const CustomTooltip = ({ active, payload }: CustomTooltipProps) => {
+    if (active && payload && payload.length > 0) {
+      const dataPoint = payload[0];
+      if (dataPoint && dataPoint.payload) {
+        return (
+          <div className="bg-white/90 shadow-lg backdrop-blur-sm p-3 border border-white/20 rounded-lg">
+            <p className="mb-1 font-semibold text-gray-900">{dataPoint.payload.date}</p>
+            <p className="font-medium text-gray-700">
+              {label}: <span className="text-gray-900">{valueFormatter(dataPoint.value)}</span>
+            </p>
+          </div>
+        );
+      }
     }
     return null;
   };
