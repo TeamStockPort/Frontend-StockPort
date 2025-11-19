@@ -9,7 +9,7 @@ export default function SideBarButton({ isOpen, onClick }: SideBarButtonProps) {
   return (
     <Button
       variant="ghost"
-      className="relative flex flex-col justify-center items-center gap-1.5 bg-transparent p-2 border border-white/20 rounded-xl w-12 h-12 transition-colors hover:transparent"
+      className="md:hidden relative flex flex-col justify-center items-center gap-1.5 bg-transparent p-2 border border-white/20 rounded-xl w-12 h-12 transition-colors hover:transparent"
       onClick={onClick}
     >
       <span
