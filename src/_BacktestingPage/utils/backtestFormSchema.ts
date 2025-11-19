@@ -1,10 +1,9 @@
 import { z } from "zod";
-import { differenceInMonths, differenceInYears } from "date-fns";
+import { differenceInMonths } from "date-fns";
 
 const TODAY = new Date();
 const MIN_DATE = new Date("1990-01-01"); // 1990년 1월 1일
 const MIN_MONTHS_DIFF = 3; // 최소 3개월
-const MAX_YEARS_DIFF = 10; // 최대 10년
 
 export const backtestFormSchema = z
   .object({
@@ -31,16 +30,6 @@ export const backtestFormSchema = z
     },
     {
       message: `시작일은 종료일보다 최소 ${MIN_MONTHS_DIFF}개월 전이어야 합니다.`,
-      path: ["startDate"],
-    }
-  )
-  .refine(
-    (data) => {
-      const yearsDiff = differenceInYears(data.endDate, data.startDate);
-      return yearsDiff <= MAX_YEARS_DIFF;
-    },
-    {
-      message: `시작일은 종료일보다 최대 ${MAX_YEARS_DIFF}년 전까지 가능합니다.`,
       path: ["startDate"],
     }
   );
