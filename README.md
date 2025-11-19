@@ -21,6 +21,10 @@
 - CAGR, MDD, Sharpe Ratio 등 주요 지표 제공
 - 실시간 시세 조회: 당일 기준 주요 종목의 시가 데이터를 조회할 수 있는 시세 페이지 제공
 
+## 🎥 시연 영상
+
+<video src="https://github.com/user-attachments/assets/f038fc83-450d-4009-9037-90af47f2e5a9" controls width="700"></video>
+
 ## 📸 스크린샷
 ### 메인 페이지
 - 데스크탑
@@ -47,6 +51,3 @@
 ### 종목 상세 페이지 - 캔들
 <img width="789" height="598" alt="Image" src="https://github.com/user-attachments/assets/792f1784-d45c-4cfe-a5d2-df488d6473b3" />
 
-## 🎥 시연 영상
-
-<video src="https://github.com/user-attachments/assets/f038fc83-450d-4009-9037-90af47f2e5a9" controls width="700"></video>
