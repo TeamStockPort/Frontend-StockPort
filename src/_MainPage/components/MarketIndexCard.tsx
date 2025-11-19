@@ -30,13 +30,15 @@ const MarketIndexCard = ({ marketType, marketIndex, isLoading, error }: MarketIn
   // 로딩 상태
   if (isLoading) {
     return (
-      <Card className="bg-[#0A194E] border-gray-700 text-white">
-        <CardHeader>
-          <CardTitle className="font-medium text-gray-300 text-lg">{marketType}</CardTitle>
+      <Card className="gap-1 sm:gap-6 bg-[#0A194E] py-3 sm:py-6 border-gray-700 text-white">
+        <CardHeader className="gap-1 sm:gap-1.5 px-4 sm:px-6">
+          <CardTitle className="font-medium text-gray-300 text-base sm:text-lg">
+            {marketType}
+          </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-4 sm:px-6">
           <div className="flex justify-center items-center h-48">
-            <Spinner className="size-12" />
+            <Spinner className="size-8 sm:size-12" />
           </div>
         </CardContent>
       </Card>
@@ -50,13 +52,15 @@ const MarketIndexCard = ({ marketType, marketIndex, isLoading, error }: MarketIn
       axiosError.response?.data?.detail || "데이터를 불러오는 중 오류가 발생했습니다.";
 
     return (
-      <Card className="bg-[#0A194E] border-gray-700 text-white">
-        <CardHeader>
-          <CardTitle className="font-medium text-gray-300 text-lg">{marketType}</CardTitle>
+      <Card className="gap-1 sm:gap-6 bg-[#0A194E] py-3 sm:py-6 border-gray-700 text-white">
+        <CardHeader className="gap-1 sm:gap-1.5 px-4 sm:px-6">
+          <CardTitle className="font-medium text-gray-300 text-base sm:text-lg">
+            {marketType}
+          </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-4 sm:px-6">
           <div className="flex justify-center items-center h-48">
-            <p className="text-red-500 text-center">{errorMessage}</p>
+            <p className="text-red-500 text-sm sm:text-base text-center">{errorMessage}</p>
           </div>
         </CardContent>
       </Card>
@@ -66,13 +70,15 @@ const MarketIndexCard = ({ marketType, marketIndex, isLoading, error }: MarketIn
   // 데이터가 없는 경우
   if (!marketIndex) {
     return (
-      <Card className="bg-[#0A194E] border-gray-700 text-white">
-        <CardHeader>
-          <CardTitle className="font-medium text-gray-300 text-lg">{marketType}</CardTitle>
+      <Card className="gap-1 sm:gap-6 bg-[#0A194E] py-3 sm:py-6 border-gray-700 text-white">
+        <CardHeader className="gap-1 sm:gap-1.5 px-4 sm:px-6">
+          <CardTitle className="font-medium text-gray-300 text-base sm:text-lg">
+            {marketType}
+          </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-4 sm:px-6">
           <div className="flex justify-center items-center h-48">
-            <p className="text-gray-400">데이터가 없습니다.</p>
+            <p className="text-gray-400 text-sm sm:text-base">데이터가 없습니다.</p>
           </div>
         </CardContent>
       </Card>
@@ -84,13 +90,15 @@ const MarketIndexCard = ({ marketType, marketIndex, isLoading, error }: MarketIn
 
   if (!latestData) {
     return (
-      <Card className="bg-[#0A194E] border-gray-700 text-white">
-        <CardHeader>
-          <CardTitle className="font-medium text-gray-300 text-lg">{marketType}</CardTitle>
+      <Card className="gap-1 sm:gap-6 bg-[#0A194E] py-3 sm:py-6 border-gray-700 text-white">
+        <CardHeader className="gap-1 sm:gap-1.5 px-4 sm:px-6">
+          <CardTitle className="font-medium text-gray-300 text-base sm:text-lg">
+            {marketType}
+          </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-4 sm:px-6">
           <div className="flex justify-center items-center h-48">
-            <p className="text-gray-400">데이터가 없습니다.</p>
+            <p className="text-gray-400 text-sm sm:text-base">데이터가 없습니다.</p>
           </div>
         </CardContent>
       </Card>
@@ -108,18 +116,22 @@ const MarketIndexCard = ({ marketType, marketIndex, isLoading, error }: MarketIn
   }));
 
   return (
-    <Card className="bg-[#0A194E] border-gray-700 text-white">
-      <CardHeader>
-        <CardTitle className="font-medium text-gray-300 text-lg">{marketType}</CardTitle>
+    <Card className="gap-1 sm:gap-6 bg-[#0A194E] py-2 sm:py-6 border-gray-700 text-white">
+      <CardHeader className="gap-1 sm:gap-1.5 px-4 sm:px-6 pt-2">
+        <CardTitle className="font-medium text-gray-300 text-base sm:text-lg">
+          {marketType}
+        </CardTitle>
       </CardHeader>
 
-      <CardContent>
-        <p className="font-bold text-4xl">{latestData.closePrice.toLocaleString()}</p>
-        <p className={`mt-2 text-lg font-semibold ${getChangeColor(latestData.changeRate)}`}>
+      <CardContent className="px-4 sm:px-6">
+        <p className="font-bold text-2xl sm:text-4xl">{latestData.closePrice.toLocaleString()}</p>
+        <p
+          className={`mt-1.5 sm:mt-2 text-sm sm:text-lg font-semibold ${getChangeColor(latestData.changeRate)}`}
+        >
           {arrow} {Math.abs(latestData.changeAmount).toFixed(2)} ({sign}
           {latestData.changeRate.toFixed(2)}%)
         </p>
-        <div className="mt-4 h-24">
+        <div className="mt-3 sm:mt-4 h-24">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={chartData}>
               <YAxis domain={["dataMin - 10", "dataMax + 10"]} hide />
