@@ -1,10 +1,9 @@
 import { z } from "zod";
-import { differenceInMonths, differenceInYears } from "date-fns";
+import { differenceInMonths } from "date-fns";
 
 const TODAY = new Date();
 const MIN_DATE = new Date("1990-01-01"); // 1990년 1월 1일
 const MIN_MONTHS_DIFF = 3; // 최소 3개월
-const MAX_YEARS_DIFF = 10; // 최대 10년
 
 export const backtestFormSchema = z
   .object({
