@@ -3,3 +3,4 @@ dist
 build
 README.md
 pnpm-lock.yaml
+.claude

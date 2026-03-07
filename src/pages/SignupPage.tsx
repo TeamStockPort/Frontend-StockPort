@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Logo from "@/components/Navbar/Logo";
-import { __DEV__ } from "@/utils/instance";
 import { useSignUp } from "@/lib/hooks/useSignUp";
 import { signInWithGitHub } from "@/lib/apis/auth";
 import { generateErrorMessage } from "@/lib/error";
@@ -38,10 +37,6 @@ const SignupPage = () => {
     if (password.length < 6) {
       toast.error("비밀번호는 최소 6자 이상이어야 합니다.");
       return;
-    }
-
-    if (__DEV__) {
-      console.log("Email signup:", { email, password });
     }
 
     signUp(

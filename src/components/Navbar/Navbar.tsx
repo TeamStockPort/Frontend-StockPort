@@ -4,7 +4,7 @@ import SearchBar from "@/components/Navbar/SearchBar";
 import SideBarButton from "@/components/Navbar/SideBarButton";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
-import { useAuth } from "@/lib/contexts/AuthContext";
+import { useAuth } from "@/lib/hooks/useAuth";
 import { signOut } from "@/lib/apis/auth";
 import { toast } from "sonner";
 
