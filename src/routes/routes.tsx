@@ -3,6 +3,7 @@ import Layout from "@/layouts/Layout";
 import { MainPage, MarketsPage, MarketDetailPage, PortfolioPage, BacktestingPage } from "@/pages";
 import LoginPage from "@/pages/LoginPage";
 import SignupPage from "@/pages/SignupPage";
+import PortfolioDetailPage from "@/pages/PortfolioDetailPage";
 
 export const routes: RouteObject[] = [
   {
@@ -21,6 +22,7 @@ export const routes: RouteObject[] = [
       { path: "markets", element: <MarketsPage /> },
       { path: "markets/:code", element: <MarketDetailPage /> },
       { path: "portfolio", element: <PortfolioPage /> },
+      { path: "portfolio/:backtestId", element: <PortfolioDetailPage /> },
       { path: "backtest", element: <BacktestingPage /> },
     ],
   },
