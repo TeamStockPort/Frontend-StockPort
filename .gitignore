@@ -155,3 +155,6 @@ dist-ssr
 *.sw?
 
 .env
+
+# OpenCode configuration
+.opencode
