@@ -2,13 +2,27 @@ import Logo from "@/components/Navbar/Logo";
 import NavItem from "@/components/Navbar/NavItem";
 import SearchBar from "@/components/Navbar/SearchBar";
 import SideBarButton from "@/components/Navbar/SideBarButton";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
+import { useAuth } from "@/lib/contexts/AuthContext";
+import { signOut } from "@/lib/apis/auth";
+import { toast } from "sonner";
 
 const Navbar = () => {
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLDivElement>(null);
+  const { user, isLoading } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      navigate("/");
+    } catch {
+      toast.error("로그아웃에 실패했습니다.");
+    }
+  };
 
   // 외부 클릭 시 모달 닫기
   useEffect(() => {
@@ -63,6 +77,26 @@ const Navbar = () => {
                   >
                     Markets
                   </Link>
+                  {!isLoading &&
+                    (user ? (
+                      <button
+                        onClick={() => {
+                          setIsSideBarOpen(false);
+                          handleSignOut();
+                        }}
+                        className="hover:opacity-100 py-1 font-bold text-white text-base text-left cursor-pointer transition-opacity"
+                      >
+                        로그아웃
+                      </button>
+                    ) : (
+                      <Link
+                        to="/login"
+                        className="hover:opacity-100 py-1 font-bold text-white text-base transition-opacity"
+                        onClick={() => setIsSideBarOpen(false)}
+                      >
+                        로그인
+                      </Link>
+                    ))}
                 </div>
               </div>
             </div>
@@ -74,6 +108,22 @@ const Navbar = () => {
             <NavItem to="markets" label="Markets" />
           </ul>
           <SearchBar />
+          {!isLoading &&
+            (user ? (
+              <button
+                onClick={handleSignOut}
+                className="hover:opacity-80 font-bold text-white text-base whitespace-nowrap cursor-pointer transition-opacity"
+              >
+                로그아웃
+              </button>
+            ) : (
+              <Link
+                to="/login"
+                className="hover:opacity-80 font-bold text-white text-base whitespace-nowrap transition-opacity"
+              >
+                로그인
+              </Link>
+            ))}
         </div>
       </nav>
     </>
