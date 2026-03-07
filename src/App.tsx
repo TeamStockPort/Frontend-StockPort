@@ -5,6 +5,7 @@ import { queryClient } from "@/lib/queryClient";
 import { routes } from "@/routes/routes";
 import { __DEV__ } from "@/utils/instance";
 import { Toaster } from "sonner";
+import { AuthProvider } from "@/lib/contexts/AuthContext";
 
 const AppRoutes = () => {
   return useRoutes(routes);
@@ -13,10 +14,12 @@ const AppRoutes = () => {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Toaster position="top-center" />
-      <Router>
-        <AppRoutes />
-      </Router>
+      <AuthProvider>
+        <Toaster position="top-center" />
+        <Router>
+          <AppRoutes />
+        </Router>
+      </AuthProvider>
       {__DEV__ && <ReactQueryDevtools initialIsOpen={false} />}
     </QueryClientProvider>
   );
