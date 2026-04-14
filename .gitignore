@@ -154,4 +154,10 @@ dist-ssr
 *.sln
 *.sw?
 
+.envrc
+.mcp.json
+
 .env
+
+# OpenCode configuration
+.opencode

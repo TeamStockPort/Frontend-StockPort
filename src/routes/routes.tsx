@@ -1,8 +1,19 @@
 import { type RouteObject } from "react-router-dom";
 import Layout from "@/layouts/Layout";
 import { MainPage, MarketsPage, MarketDetailPage, PortfolioPage, BacktestingPage } from "@/pages";
+import LoginPage from "@/pages/LoginPage";
+import SignupPage from "@/pages/SignupPage";
+import PortfolioDetailPage from "@/pages/PortfolioDetailPage";
 
 export const routes: RouteObject[] = [
+  {
+    path: "/login",
+    element: <LoginPage />,
+  },
+  {
+    path: "/signup",
+    element: <SignupPage />,
+  },
   {
     path: "/",
     element: <Layout />,
@@ -11,6 +22,7 @@ export const routes: RouteObject[] = [
       { path: "markets", element: <MarketsPage /> },
       { path: "markets/:code", element: <MarketDetailPage /> },
       { path: "portfolio", element: <PortfolioPage /> },
+      { path: "portfolio/:backtestId", element: <PortfolioDetailPage /> },
       { path: "backtest", element: <BacktestingPage /> },
     ],
   },

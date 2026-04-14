@@ -9,6 +9,7 @@
 - Chart: Recharts, eCharts
 - Server State: Tanstack Query
 - form + validate: react-hook-form + zod
+- Auth & DB: Supabase (Authentication, PostgreSQL, RLS)
 
 ## 📄 프로젝트 개요
 
@@ -20,6 +21,8 @@
 - 과거 데이터를 활용한 백테스팅 결과 시각화 (수익률 차트, 요약 통계)
 - CAGR, MDD, Sharpe Ratio 등 주요 지표 제공
 - 실시간 시세 조회: 당일 기준 주요 종목의 시가 데이터를 조회할 수 있는 시세 페이지 제공
+- 회원 인증: Supabase 기반 이메일/비밀번호 및 GitHub OAuth 로그인·회원가입
+- 백테스트 저장: 로그인 사용자의 백테스트 결과를 Supabase DB에 저장·조회·삭제 (RLS 기반 본인 데이터만 접근)
 
 ## 🎥 시연 영상
 
@@ -50,4 +53,3 @@
 
 ### 종목 상세 페이지 - 캔들
 <img width="789" height="598" alt="Image" src="https://github.com/user-attachments/assets/792f1784-d45c-4cfe-a5d2-df488d6473b3" />
-

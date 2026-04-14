@@ -25,3 +25,11 @@ export type SearchAssetsResponse = {
   stockCode: string;
   isinCode: string;
 };
+
+//mutate 콜백 타입
+export type UseMutationCallback = {
+  onSuccess?: () => void;
+  onError?: (error: Error) => void;
+  onMutate?: () => void;
+  onSettled?: () => void;
+};

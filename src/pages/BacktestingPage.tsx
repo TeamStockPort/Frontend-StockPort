@@ -4,21 +4,29 @@ import Title from "@/components/Title";
 import Notice from "@/_BacktestingPage/components/Notice";
 import BacktestForm from "@/_BacktestingPage/components/BacktestForm";
 import AssetAllocation from "@/_BacktestingPage/components/AssetAllocation";
-import StartBacktestButton from "@/_BacktestingPage/components/StartBacktestButton";
+// import StartBacktestButton from "@/_BacktestingPage/components/StartBacktestButton";
 import {
   backtestFormSchema,
   type BacktestFormSchema,
 } from "@/_BacktestingPage/utils/backtestFormSchema";
 import { useState, useMemo, useRef, useEffect } from "react";
-import { mapToBacktestRequest } from "@/_BacktestingPage/utils/mapToRequest";
+// import { mapToBacktestRequest } from "@/_BacktestingPage/utils/mapToRequest";
 import { v4 as uuidv4 } from "uuid";
 import BacktestResult from "@/_BacktestingPage/components/BacktestResult";
-import { Card, CardContent } from "@/components/ui/card";
-import { usePostBacktest } from "@/lib/hooks/usePostBacktest";
-import { Progress } from "@/components/ui/progress";
-import { useProgress } from "@/_BacktestingPage/hooks/useProgress";
-import type { AxiosError } from "axios";
-import type { ApiErrorResponse } from "@/lib/apis/types";
+import SaveBacktestButton from "@/_BacktestingPage/components/SaveBacktestButton";
+import type {
+  BacktestRequest,
+  BacktestResult as BacktestResultType,
+} from "@/_BacktestingPage/types/backtestFormType";
+import { Card } from "@/components/ui/card";
+// import { CardContent } from "@/components/ui/card";
+// import { usePostBacktest } from "@/lib/hooks/usePostBacktest";
+// import { Progress } from "@/components/ui/progress";
+// import { useProgress } from "@/_BacktestingPage/hooks/useProgress";
+// import type { AxiosError } from "axios";
+// import type { ApiErrorResponse } from "@/lib/apis/types";
+import { MOCK_BACKTEST_REQUEST, MOCK_BACKTEST_RESULT } from "@/constants/mockBacktest";
+import { Button } from "@/components/ui/button";
 
 const BacktestingPage = () => {
   const [assets, setAssets] = useState([{ id: uuidv4(), name: "", ticker: "", weight: 0 }]);
@@ -34,59 +42,72 @@ const BacktestingPage = () => {
       rebalanceFrequency: "매년",
     },
   });
-  const { mutate, isPending, error, data } = usePostBacktest();
-  const { progress, showResult } = useProgress({ isPending, data, error });
-  const buttonRef = useRef<HTMLDivElement>(null);
+
+  // --- 목데이터 모드 ---
+  const [lastRequest, setLastRequest] = useState<BacktestRequest | null>(null);
+  const [mockResult, setMockResult] = useState<BacktestResultType | null>(null);
   const resultRef = useRef<HTMLDivElement>(null);
-  const errorRef = useRef<HTMLDivElement>(null);
 
-  // isSuccess가 false인 경우도 에러로 처리
-  const hasError = error || (data && data.isSuccess === false);
-  const errorMessage = error
-    ? error instanceof Error
-      ? error.message
-      : (error as AxiosError<ApiErrorResponse>).response?.data?.detail ||
-        "알 수 없는 오류가 발생했습니다."
-    : data && data.isSuccess === false
-      ? data.message || "백테스트 수행 중 오류가 발생했습니다."
-      : "";
-
-  // 에러나 결과가 나오면 스크롤을 아래로 내리기
   useEffect(() => {
-    if (showResult && resultRef.current) {
+    if (mockResult && resultRef.current) {
       setTimeout(() => {
         resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
       }, 100);
-    } else if (hasError && !isPending && errorRef.current) {
-      setTimeout(() => {
-        errorRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-      }, 100);
     }
-  }, [showResult, hasError, isPending]);
+  }, [mockResult]);
 
-  const handleSubmit = form.handleSubmit((formData) => {
-    // 버튼이 화면 상단에 오도록 스크롤
-    if (buttonRef.current) {
-      buttonRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+  const handleMockBacktest = () => {
+    setLastRequest(MOCK_BACKTEST_REQUEST);
+    setMockResult(MOCK_BACKTEST_RESULT);
+  };
 
-    const hasInvalidAsset = assets.some((asset) => {
-      return !asset.name || !asset.ticker || asset.weight < 1 || asset.weight > 100;
-    });
-
-    if (hasInvalidAsset) {
-      alert("모든 자산의 종목명, 티커, 비중을 올바르게 입력해주세요.");
-      return;
-    }
-
-    if (totalWeight !== 100) {
-      alert("비중의 합이 100%가 되어야 합니다.");
-      return;
-    }
-
-    const requestData = mapToBacktestRequest(formData, assets);
-    mutate(requestData);
-  });
+  // --- 실제 API 모드 (백엔드 연결 시 주석 해제) ---
+  // const { mutate, isPending, error, data } = usePostBacktest();
+  // const { progress, showResult } = useProgress({ isPending, data, error });
+  // const buttonRef = useRef<HTMLDivElement>(null);
+  // const errorRef = useRef<HTMLDivElement>(null);
+  //
+  // const hasError = error || (data && data.isSuccess === false);
+  // const errorMessage = error
+  //   ? error instanceof Error
+  //     ? error.message
+  //     : (error as AxiosError<ApiErrorResponse>).response?.data?.detail ||
+  //       "알 수 없는 오류가 발생했습니다."
+  //   : data && data.isSuccess === false
+  //     ? data.message || "백테스트 수행 중 오류가 발생했습니다."
+  //     : "";
+  //
+  // useEffect(() => {
+  //   if (showResult && resultRef.current) {
+  //     setTimeout(() => {
+  //       resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  //     }, 100);
+  //   } else if (hasError && !isPending && errorRef.current) {
+  //     setTimeout(() => {
+  //       errorRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  //     }, 100);
+  //   }
+  // }, [showResult, hasError, isPending]);
+  //
+  // const handleSubmit = form.handleSubmit((formData) => {
+  //   if (buttonRef.current) {
+  //     buttonRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+  //   }
+  //   const hasInvalidAsset = assets.some((asset) => {
+  //     return !asset.name || !asset.ticker || asset.weight < 1 || asset.weight > 100;
+  //   });
+  //   if (hasInvalidAsset) {
+  //     alert("모든 자산의 종목명, 티커, 비중을 올바르게 입력해주세요.");
+  //     return;
+  //   }
+  //   if (totalWeight !== 100) {
+  //     alert("비중의 합이 100%가 되어야 합니다.");
+  //     return;
+  //   }
+  //   const requestData = mapToBacktestRequest(formData, assets);
+  //   setLastRequest(requestData);
+  //   mutate(requestData);
+  // });
 
   return (
     <div className="gap-6 mb-20 px-18">
@@ -100,15 +121,28 @@ const BacktestingPage = () => {
           totalWeight={totalWeight}
         ></AssetAllocation>
       </Card>
-      <div ref={buttonRef}>
+
+      {/* 목데이터 버튼 (백엔드 연결 시 아래 주석 해제하고 이 버튼 제거) */}
+      <div className="flex justify-center items-center mb-6">
+        <Button
+          onClick={handleMockBacktest}
+          size="lg"
+          className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl px-8 py-6 border-0 rounded-xl font-semibold text-base text-white transition-all duration-200 cursor-pointer"
+        >
+          백테스트 시작 (삼성전자 60% + SK하이닉스 40%, 5년)
+        </Button>
+      </div>
+
+      {/* 실제 API 버튼 (백엔드 연결 시 주석 해제) */}
+      {/* <div ref={buttonRef}>
         <StartBacktestButton
           handleSubmit={handleSubmit}
           disabled={totalWeight !== 100 || isPending}
         ></StartBacktestButton>
-      </div>
+      </div> */}
 
-      {/* 로딩 상태 또는 Progress 진행 중 - 전체 화면 overlay */}
-      {(isPending || (progress > 0 && progress < 100)) && (
+      {/* 실제 API 로딩 상태 (백엔드 연결 시 주석 해제) */}
+      {/* {(isPending || (progress > 0 && progress < 100)) && (
         <div className="z-50 fixed inset-0 flex justify-center items-center bg-black/50 backdrop-blur-sm">
           <Card className="bg-white/10 mx-4 border-white/20 w-full max-w-md text-white">
             <CardContent>
@@ -121,10 +155,10 @@ const BacktestingPage = () => {
             </CardContent>
           </Card>
         </div>
-      )}
+      )} */}
 
-      {/* 에러 상태 - error가 있거나 data.isSuccess가 false인 경우 */}
-      {hasError && !isPending && progress === 0 && (
+      {/* 실제 API 에러 상태 (백엔드 연결 시 주석 해제) */}
+      {/* {hasError && !isPending && progress === 0 && (
         <div ref={errorRef}>
           <Card className="bg-white/5 border-white/10 text-white">
             <CardContent>
@@ -139,14 +173,23 @@ const BacktestingPage = () => {
             </CardContent>
           </Card>
         </div>
-      )}
+      )} */}
 
-      {/* 성공 상태 - Progress가 100%가 되고 showResult가 true일 때만 렌더링 */}
-      {showResult && !error && data?.isSuccess && data?.result && (
+      {/* 목데이터 결과 */}
+      {mockResult && lastRequest && (
         <div ref={resultRef}>
-          <BacktestResult data={data.result}></BacktestResult>
+          <BacktestResult data={mockResult}></BacktestResult>
+          <SaveBacktestButton request={lastRequest} result={mockResult} />
         </div>
       )}
+
+      {/* 실제 API 결과 (백엔드 연결 시 주석 해제하고 위 목데이터 결과 제거) */}
+      {/* {showResult && !error && data?.isSuccess && data?.result && (
+        <div ref={resultRef}>
+          <BacktestResult data={data.result}></BacktestResult>
+          {lastRequest && <SaveBacktestButton request={lastRequest} result={data.result} />}
+        </div>
+      )} */}
     </div>
   );
 };
