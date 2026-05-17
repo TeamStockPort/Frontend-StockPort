@@ -24,6 +24,14 @@ const SignupPage = () => {
     },
   });
 
+  const handleClickGitHubSignUp = async () => {
+    try {
+      await signInWithGitHub();
+    } catch (error) {
+      toast.error(generateErrorMessage(error));
+    }
+  };
+
   const handleClickSignUpWithPassword = () => {
     if (email.trim() === "") return;
     if (password.trim() === "") return;
@@ -108,7 +116,7 @@ const SignupPage = () => {
           </div>
 
           <Button
-            onClick={signInWithGitHub}
+            onClick={handleClickGitHubSignUp}
             className="flex items-center justify-center gap-2 bg-white hover:brightness-85 py-4 w-full text-black cursor-pointer"
           >
             <Github className="w-5 h-5" />
