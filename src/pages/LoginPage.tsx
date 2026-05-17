@@ -41,6 +41,14 @@ const LoginPage = () => {
     }
   };
 
+  const handleClickGitHubSignIn = async () => {
+    try {
+      await signInWithGitHub();
+    } catch (error) {
+      toast.error(generateErrorMessage(error));
+    }
+  };
+
   return (
     <div className="flex justify-center items-center mx-auto px-6 py-12 w-full max-w-xl md:max-w-2xl min-h-screen">
       <div className="space-y-10 bg-brand-container shadow-lg p-8 rounded-xl w-full max-w-md">
@@ -88,7 +96,7 @@ const LoginPage = () => {
           </div>
 
           <Button
-            onClick={signInWithGitHub}
+            onClick={handleClickGitHubSignIn}
             className="flex items-center justify-center gap-2 bg-white hover:brightness-85 py-4 w-full text-black cursor-pointer"
           >
             <Github className="w-5 h-5" />

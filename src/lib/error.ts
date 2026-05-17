@@ -1,4 +1,5 @@
 import { AuthError } from "@supabase/supabase-js";
+import { SupabaseConfigError } from "@/lib/supabase";
 
 const AUTH_ERROR_MESSAGE_MAP: Record<string, string> = {
   email_exists: "이미 사용 중인 이메일입니다.",
@@ -22,6 +23,10 @@ const AUTH_ERROR_MESSAGE_MAP: Record<string, string> = {
 };
 
 export function generateErrorMessage(error: unknown) {
+  if (error instanceof SupabaseConfigError) {
+    return error.message;
+  }
+
   if (error instanceof AuthError && error.code) {
     return (
       AUTH_ERROR_MESSAGE_MAP[error.code] ??
